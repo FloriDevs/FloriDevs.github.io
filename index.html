@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>accesscode</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url(background.jpeg);
+        }
+
+        .container {
+            text-align: center;
+            background-color: gray;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: ;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: greenyellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FloriDevs website code!</h1>
+        <h3>Enter your accesscode:</h3>
+        <input type="text" id="codeEingabe" placeholder="Your Code">
+        <button onclick="weiterleiten()">Go!</button>
+    </div>
+    <div class="footer">
+        <h4>Here are the websites that are protected with a code 
+            (by me and possibly my friends). If you don't know me
+             or don't know anyone with a code, <a href="#" onclick="window.close();">please leave this site!</a></h4>
+    </div>
+
+    <script>
+        function weiterleiten() {
+            var code = document.getElementById("codeEingabe").value;
+            if (code) {
+                window.location.href = "codepages89898/codes/" + code + ".html";
+            } else {
+                alert("Please, enter a code");
+            }
+        }
+    </script>
+</body>
+</html>
