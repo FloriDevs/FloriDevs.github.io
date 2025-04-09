@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FS Browser start german</title>
+    <style>
+        body {
+            background-image: url(https://github.com/Flori-Soft-open/Flori-Soft-open.github.io/blob/main/background.jpeg?raw=true);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column; /* Stellt sicher, dass die Leiste oben ist */
+            height: 100vh; /* Vollständige Höhe des Viewports */
+        }
+        .header {
+            background-color: green; /* Grüne Hintergrundfarbe */
+            width: 100%; /* Vollständige Breite */
+            padding: 10px; /* Innenabstand */
+            display: flex; /* Flexbox für die Anordnung */
+            justify-content: flex-end; /* Positioniert den Inhalt nach rechts */
+            align-items: center; /* Vertikale Ausrichtung */
+        }
+        input[type="text"] {
+            color: black; /* Textfarbe schwarz */
+            background-color: white; /* Hintergrundfarbe des Textfeldes */
+            border: 1px solid black; /* Schwarzer Rand */
+            padding: 5px; /* Innenabstand */
+        }
+        button {
+            color: black; /* Textfarbe schwarz */
+            background-color: white; /* Hintergrundfarbe des Buttons */
+            border: 1px solid black; /* Schwarzer Rand */
+            padding: 5px 10px; /* Innenabstand */
+            cursor: pointer; /* Zeiger-Cursor */
+        }
+        .squares {
+            display: flex; /* Flexbox für die Anordnung der Quadrate */
+            margin-top: auto; /* Schiebt die Quadrate nach unten */
+            margin-bottom: 20px; /* Abstand vom unteren Rand */
+        }
+        .square {
+            width: 100px; /* Breite der Quadrate */
+            height: 100px; /* Höhe der Quadrate */
+            margin-right: 10px; /* Abstand zwischen den Quadraten */
+        }
+        img {
+            width: 100%; /* Breite des Bildes anpassen */
+            height: auto; /* Automatische Höhe */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 style="margin: 0; color: black;">Suche mit Ecosia</h1>
+        <form action="https://www.ecosia.org/search" method="get">
+            <input type="text" name="q" placeholder="Suchbegriff eingeben" required>
+            <button type="submit">Suchen</button>
+        </form>
+    </div>
+    <div class="squares">
+        <a href="https://vscode.dev" target="_blank">
+            <img class="square" src="https://tse1.explicit.bing.net/th?id=OIP.S6AJs6f8h5CKxNhrQwekKAHaHa&pid=Api" alt="VSC Logo">
+        </a>
+        <a href="https://github.com/" target="_blank">
+            <img class="square" src="https://tse4.mm.bing.net/th?id=OIP.ZIgLmw_ltTu-P3KA0mKzPwAAAA&pid=Api" alt="GitHub Logo">
+        </a>
+        <a href="https://Flori-Soft-open.github.io" target="_blank">
+            <img class="square" src="https://avatars.githubusercontent.com/u/175223787?v=4" alt="Anderes Logo">
+        </a>
+        <a href="https://www.online-python.com/" target="_blank">
+          <img class="square" src="https://tse3.mm.bing.net/th?id=OIP.bk_W3NS_LEZ_bmoL7WxwZQHaHa&pid=Api" alt="Anderes Logo">
+      </a>
+      <a href="https://www.online-java.com/" target="_blank">
+        <img class="square" src="https://tse1.mm.bing.net/th?id=OIP.Z6l6XE-QFkDkfKRZ3u51awHaHa&pid=Api" alt="Anderes Logo">
+    </a>
+  </a>
+  <a href="https://www.online-cpp.com/" target="_blank">
+    <img class="square" src="https://tse4.mm.bing.net/th?id=OIP.lgwXE7NpJMo_cn3wp3hJaQHaHa&pid=Api" alt="Anderes Logo">
+
+</a>
+<a href="https://scratch.mit.edu/projects/editor/?tutorial=getStarted" target="_blank">
+  <img class="square" src="https://tse2.mm.bing.net/th?id=OIP.zTxyNC5Vlld1aefhwQR35QAAAA&pid=Api" alt="Anderes Logo">
+
+</a>
+
+
+    </div>
+</body>
+</html>
