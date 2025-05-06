@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fliegende Wörter!</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden; /* Verhindert Scrollbalken */
+            background-color: #f0f0f0;
+        }
+
+        .flying-word {
+            position: absolute;
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            cursor: default; /* Macht den Cursor nicht zum Textauswahl-Cursor */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="word-container">
+        <div class="flying-word" style="color: blue;">Willkommen</div>
+        <div class="flying-word" style="color: green;">Test</div>
+        <div class="flying-word" style="color: orange;">Hallo</div>
+        <div class="flying-word" style="color: purple;">Frühstück</div>
+        <div class="flying-word" style="color: red;">lecker</div>
+        <div class="flying-word" style="color: brown;">Hunde</div>
+        <div class="flying-word" style="color: teal;">bruh</div>
+    </div>
+
+    <script>
+        const words = document.querySelectorAll('.flying-word');
+        const container = document.getElementById('word-container');
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        function getRandomPosition() {
+            const x = Math.random() * windowWidth;
+            const y = Math.random() * windowHeight;
+            return { x, y };
+        }
+
+        function moveWord(word) {
+            const { x, y } = getRandomPosition();
+            word.style.left = `${x}px`;
+            word.style.top = `${y}px`;
+        }
+
+        function animateWord(word) {
+            let xSpeed = (Math.random() - 0.5) * 2; // Zufällige Geschwindigkeit horizontal
+            let ySpeed = (Math.random() - 0.5) * 2; // Zufällige Geschwindigkeit vertikal
+            let currentX = parseFloat(word.style.left) || getRandomPosition().x;
+            let currentY = parseFloat(word.style.top) || getRandomPosition().y;
+
+            function updatePosition() {
+                currentX += xSpeed;
+                currentY += ySpeed;
+
+                // Abprallen von den Rändern
+                if (currentX < 0 || currentX > windowWidth - word.offsetWidth) {
+                    xSpeed *= -1;
+                }
+                if (currentY < 0 || currentY > windowHeight - word.offsetHeight) {
+                    ySpeed *= -1;
+                }
+
+                word.style.left = `${currentX}px`;
+                word.style.top = `${currentY}px`;
+                requestAnimationFrame(updatePosition);
+            }
+
+            updatePosition();
+        }
+
+        words.forEach(word => {
+            moveWord(word); // Startposition festlegen
+            animateWord(word); // Animation starten
+        });
+
+        // Anpassen der Bewegung bei Fenstergrößenänderung
+        window.addEventListener('resize', () => {
+            windowWidth = window.innerWidth;
+            windowHeight = window.innerHeight;
+        });
+    </script>
+
+</body>
+</html>
