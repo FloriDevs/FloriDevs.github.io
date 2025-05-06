@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feuerwerk: Die Kehrseite des Spektakels</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50; /* Dunkles Anthrazit */
+            --secondary-color: #e67e22; /* Kräftiges Orange */
+            --text-color: #34495e; /* Dunkelgrau */
+            --background-color: #f0f0f0; /* Helles Grau */
+            --card-background: #fff;
+            --accent-color: #c0392b; /* Dunkles Rot */
+            --link-color: #3498db; /* Helles Blau */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            background-image: url(ani.png);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 3rem 2rem;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #ddd;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            max-width: 1000px;
+            padding: 2rem 0;
+        }
+
+        section {
+            background-color: var(--card-background);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid var(--secondary-color);
+        }
+
+        section h2 {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        section li {
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        section li:last-child {
+            border-bottom: none;
+        }
+
+        section li::before {
+            content: '•';
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+        }
+
+        .important {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: darken(var(--link-color), 15%);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Feuerwerk: Die Kehrseite des Spektakels</h1>
+        <p>Entdecke die oft übersehenen negativen Auswirkungen von Feuerwerk auf Mensch, Tier und Umwelt.</p>
+    </header>
+
+    <main>
+        <section>
+            <h2><span style="color: var(--accent-color);">#</span>Mensch: Gesundheitliche Risiken</h2>
+            <p>Die glitzernde Pracht hat ihren Preis – für unsere Gesundheit:</p>
+            <ul>
+                <li><span class="important">Feinstaub-Alarm:</span> Winzige Partikel belasten die Atemwege und können Erkrankungen verschlimmern.</li>
+                <li><span class="important">Verletzungsgefahr:</span> Unsachgemäßer Gebrauch führt jährlich zu ernsthaften Blessuren.</li>
+                <li><span class="important">Lärm-Stress:</span> Laute Knalle stören den Schlaf und können das Gehör schädigen.</li>
+                <li><span class="important">Psychische Belastung:</span> Traumatische Erlebnisse können durch Feuerwerk reaktiviert werden.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2><span style="color: var(--accent-color);">#</span>Tierwelt: Angst und Gefahr</h2>
+            <p>Für Tiere bedeuten die bunten Explosionen puren Stress:</p>
+            <ul>
+                <li><span class="important">Panik-Modus:</span> Fluchtinstinkte werden ausgelöst, was zu Verletzungen und Orientierungslosigkeit führen kann.</li>
+                <li><span class="important">Herzrasen & Stress:</span> Der Lärm kann gravierende körperliche Reaktionen hervorrufen.</li>
+                <li><span class="important">Desorientierung:</span> Besonders Vögel verlieren leicht die Richtung.</li>
+                <li><span class="important">Langzeit-Effekte:</span> Wiederholter Stress kann das Verhalten von Tieren nachhaltig verändern.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2><span style="color: var(--accent-color);">#</span>Umwelt: Schäden und Verschmutzung</h2>
+            <p>Auch unsere Umwelt zahlt einen hohen Preis für das Feuerwerk:</p>
+            <ul>
+                <li><span class="important">Luftverschmutzung:</span> Schädliche Chemikalien und Feinstaub trüben die Luftqualität.</li>
+                <li><span class="important">Boden & Wasser:</span> Rückstände von Schwermetallen und Plastik kontaminieren die Umwelt.</li>
+                <li><span class="important">Müll-Problem:</span> Berge von Abfall bleiben nach dem Spektakel zurück.</li>
+                <li><span class="important">Brandgefahr:</span> Trockene Gebiete werden zur tickenden Zeitbombe.</li>
+                <li><span class="important">CO2-Fußabdruck:</span> Auch wenn gering, tragen die Emissionen zum Klimawandel bei.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2><span style="color: var(--accent-color);">#</span>Die clevere Alternative</h2>
+            <p>Es gibt coole Wege zu feiern, die unseren Planeten und seine Bewohner respektieren:</p>
+            <ul>
+                <li><span class="important">Licht- & Lasershows:</span> Visuelle Meisterwerke ohne Knall und Rauch.</li>
+                <li><span class="important">Community-Events:</span> Professionelle, zentrale Feuerwerke mit geringerer Umweltbelastung.</li>
+                <li><span class="important">Kreative Deko:</span> Stimmungsvolle Beleuchtung und fantasievolle Gestaltung.</li>
+                <li><span class="important">Chillige Feiern:</span> Gemeinsam genießen, ohne Lärm und Stress.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Feuerwerk – Denk drüber nach!</p>
+    </footer>
+</body>
+</html>
