@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noteboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: #111827;
+            color: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1614850715740-e1b57728093a?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .container {
+            background-color: rgba(17, 24, 39, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 95%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Änderung: Ausrichtung auf den Anfang */
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
+            flex-wrap: wrap; /* Hinzugefügt: Für kleinere Bildschirme */
+        }
+
+        #datetime {
+            display: flex;
+            flex-direction: column;
+            color: #e5e7eb;
+            margin-right: 20px; /* Hinzugefügt: Abstand zum Kalender */
+        }
+
+        #date {
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        #time {
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        #appointments-list {
+            margin-top: 10px; /* Abstand zur Uhrzeit */
+            padding-left: 0;
+            list-style: none;
+            color: #ffffff;
+            font-size: 1.1em;
+        }
+
+        #appointments-list li {
+            margin-bottom: 5px;
+            padding-left: 0;
+        }
+
+        #weather {
+            font-size: 1.4em;
+            color: #8f9ca6;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        #sticky-notes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+        }
+
+        .sticky-note {
+            background-color: #fef08a;
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 220px;
+            height: auto;
+            position: absolute;
+            cursor: grab;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .sticky-note:active{
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            cursor: grabbing;
+        }
+
+        .sticky-note textarea {
+            border: none;
+            background: transparent;
+            width: 100%;
+            height: 100%;
+            font-family: inherit;
+            font-size: 1.1em;
+            resize: none;
+            outline: none;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        #add-note-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed #cbd5e0;
+            color: #cbd5e0;
+            font-size: 2.2em;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, border-color 0.3s ease-in-out;
+        }
+
+        #add-note-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            border-color: #f0f4f8;
+        }
+
+        #calendar {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #calendar table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        #calendar th, #calendar td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #calendar th {
+            color: #f0f4f8;
+            font-weight: 600;
+        }
+
+        #calendar td {
+            color: #e2e8f0;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        #calendar td:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        #calendar td.today {
+            background-color: #6b7280;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .appointment {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+            display: inline-block;
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: calc(100% - 10px);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        #link-collection {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #link-collection h2 {
+            margin-top: 0;
+            color: #f0f4f8;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        #links {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 25px;
+        }
+
+        #links li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #links li:last-child {
+            border-bottom: none;
+        }
+
+        #links li a {
+            color: #86efac;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+
+        #links li a:hover {
+            color: #22c55e;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .delete-link {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-left: 15px;
+            opacity: 0.7;
+            transition: color 0.3s ease-in-out, opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .delete-link:hover {
+            color: #dc2626;
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        #add-link-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            backdrop-filter: blur(5px);
+        }
+
+        #add-link-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 25px;
+            color: #b8b8b8;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 25px;
+            font-size: 0.9em;
+        }
+
+        #export-data-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            backdrop-filter: blur(5px);
+        }
+
+        #export-data-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        ::selection {
+            background-color: #a7f3d0;
+            color: #065f46;
+        }
+
+        input::placeholder {
+            color: #d1d5db;
+        }
+
+        textarea::placeholder{
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div id="datetime">
+                <span id="date"></span>
+                <span id="time"></span>
+                <ul id="appointments-list">
+                </ul>
+            </div>
+            <div id="weather"></div>
+        </header>
+
+        <main>
+            <div id="sticky-notes-container">
+                <button id="add-note-button">+</button>
+            </div>
+
+            <div id="calendar">
+            </div>
+
+            <div id="link-collection">
+                <h2>Meine Links</h2>
+                <ul id="links">
+                </ul>
+                <button id="add-link-button">Link hinzufügen</button>
+            </div>
+        </main>
+
+        <footer>
+            <button id="export-data-button">Daten exportieren</button>
+            <p>&copy; Mein Dashboard</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stickyNotesContainer = document.getElementById('sticky-notes-container');
+            const addNoteButton = document.getElementById('add-note-button');
+            const calendarDiv = document.getElementById('calendar');
+            const linksList = document.getElementById('links');
+            const addLinkButton = document.getElementById('add-link-button');
+            const dateSpan = document.getElementById('date');
+            const timeSpan = document.getElementById('time');
+            const weatherDiv = document.getElementById('weather');
+            const exportDataButton = document.getElementById('export-data-button');
+            const appointmentsList = document.getElementById('appointments-list');
+
+
+            let currentCalendarYear;
+            let currentCalendarMonth;
+            let appointments = {};
+
+            // --- Notizzettel-Funktionen ---
+            function loadNotes() {
+                const notes = getCookie('stickyNotes');
+                if (notes) {
+                    try {
+                        JSON.parse(notes).forEach(noteData => {
+                            createNote(noteData.content, noteData.x, noteData.y);
+                        });
+                    } catch (error) {
+                        console.error("Error parsing sticky notes:", error);
+                        setCookie('stickyNotes', '[]', 30);
+                    }
+                }
+            }
+
+            function saveNotes() {
+                const notesData = [];
+                document.querySelectorAll('.sticky-note').forEach(note => {
+                    notesData.push({
+                        content: note.querySelector('textarea').value,
+                        x: note.style.left,
+                        y: note.style.top
+                    });
+                });
+                setCookie('stickyNotes', JSON.stringify(notesData), 30);
+            }
+
+            function createNote(content = '', x = '50px', y = '50px') {
+                const note = document.createElement('div');
+                note.classList.add('sticky-note');
+                note.style.left = x;
+                note.style.top = y;
+
+                const textarea = document.createElement('textarea');
+                textarea.value = content;
+                textarea.placeholder = "Notiz hier eingeben...";
+                textarea.addEventListener('input', saveNotes);
+
+                note.appendChild(textarea);
+                stickyNotesContainer.appendChild(note);
+
+                let isDragging = false;
+                let offsetX, offsetY;
+
+                note.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    note.style.cursor = 'grabbing';
+                    offsetX = e.clientX - note.getBoundingClientRect().left;
+                    offsetY = e.clientY - note.getBoundingClientRect().top;
+                    note.style.zIndex = 1000;
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    note.style.left = e.clientX - offsetX + 'px';
+                    note.style.top = e.clientY - offsetY + 'px';
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    note.style.cursor = 'grab';
+                    note.style.zIndex = 'auto';
+                    saveNotes();
+                });
+            }
+
+            addNoteButton.addEventListener('click', () => {
+                createNote();
+            });
+
+            // --- Kalender-Funktionen ---
+
+            function renderCalendar(year, month) {
+                currentCalendarYear = year;
+                currentCalendarMonth = month;
+                const firstDayOfMonth = new Date(year, month, 1);
+                const lastDayOfMonth = new Date(year, month + 1, 0);
+                const daysInMonth = lastDayOfMonth.getDate();
+                const startDay = firstDayOfMonth.getDay() === 0 ? 6 : firstDayOfMonth.getDay() - 1;
+
+                const calendarTable = document.createElement('table');
+                const headerRow = document.createElement('tr');
+                const daysOfWeek = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+                daysOfWeek.forEach(day => {
+                    const th = document.createElement('th');
+                    th.textContent = day;
+                    headerRow.appendChild(th);
+                });
+                calendarTable.appendChild(headerRow);
+
+                let dayCounter = 1;
+                for (let i = 0; i < 6; i++) {
+                    const weekRow = document.createElement('tr');
+                    for (let j = 0; j < 7; j++) {
+                        const dayCell = document.createElement('td');
+                        if (i === 0 && j < startDay) {
+                        } else if (dayCounter > daysInMonth) {
+                            break;
+                        } else {
+                            dayCell.textContent = dayCounter;
+                            dayCell.dataset.day = dayCounter;
+                            dayCell.dataset.month = month;
+                            dayCell.dataset.year = year;
+                            dayCell.addEventListener('click', openAppointmentDialog);
+
+                            const today = new Date();
+                            if (year === today.getFullYear() && month === today.getMonth() && dayCounter === today.getDate()) {
+                                dayCell.classList.add('today');
+                            }
+                            weekRow.appendChild(dayCell);
+                            dayCounter++;
+                        }
+                    }
+                    calendarTable.appendChild(weekRow);
+                    if (dayCounter > daysInMonth) break;
+                }
+
+                calendarDiv.innerHTML = '';
+                calendarDiv.appendChild(calendarTable);
+                loadAppointments(year, month);
+            }
+
+            function loadAppointments(year, month) {
+                const appointmentsData = getCookie('appointments');
+                 if (appointmentsData) {
+                    try{
+                        appointments = JSON.parse(appointmentsData);
+                    } catch(e){
+                         console.error("Error parsing appointments:", e);
+                         setCookie('appointments', '[]', 30);
+                         appointments = [];
+                    }
+                } else {
+                    appointments = [];
+                }
+
+                // Clear the appointments list
+                appointmentsList.innerHTML = '';
+
+                const today = new Date();
+                const todayKey = today.toISOString().split('T')[0];
+                let hasAppointmentsToday = false; // Flag to check if there are appointments today
+
+                for (const dateKey in appointments) {
+                    if (appointments.hasOwnProperty(dateKey)) {
+                        const appointmentList = appointments[dateKey];
+                        const appointmentDate = new Date(dateKey);
+                        if (appointmentDate.getFullYear() === year && appointmentDate.getMonth() === month) {
+                             appointmentList.forEach(appt => {
+                                const dayCell = calendarDiv.querySelector(`td[data-year="${appointmentDate.getFullYear()}"][data-month="${appointmentDate.getMonth()}"][data-day="${appointmentDate.getDate()}"]`);
+                                 if (dayCell) {
+                                    const appointmentMarker = document.createElement('div');
+                                     appointmentMarker.classList.add('appointment');
+                                     appointmentMarker.textContent = appt;
+                                     dayCell.appendChild(appointmentMarker);
+                                 }
+                                if (dateKey === todayKey) {
+                                    hasAppointmentsToday = true;
+                                    const li = document.createElement('li');
+                                    li.textContent = appt;
+                                    appointmentsList.appendChild(li);
+                                }
+                            });
+                        }
+                    }
+                }
+                if (!hasAppointmentsToday) {
+                    const noAppointmentsItem = document.createElement('li');
+                    noAppointmentsItem.textContent = "Keine Termine heute";
+                    appointmentsList.appendChild(noAppointmentsItem);
+                }
+            }
+
+            function openAppointmentDialog(event) {
+                const day = event.target.dataset.day;
+                const month = event.target.dataset.month;
+                const year = event.target.dataset.year;
+                const date = new Date(year, month, day);
+                const dateKey = date.toISOString().split('T')[0];
+
+                const title = prompt(`Termin für den ${date.toLocaleDateString()} eingeben:`);
+                if (title) {
+                    addAppointment(dateKey, title);
+                }
+            }
+
+           function addAppointment(dateKey, title) {
+                if (!appointments[dateKey]) {
+                    appointments[dateKey] = [];
+                }
+                appointments[dateKey].push(title);
+                setCookie('appointments', JSON.stringify(appointments), 30);
+                renderCalendar(currentCalendarYear, currentCalendarMonth);
+            }
+
+            // --- Linksammlungs-Funktionen ---
+            function loadLinks() {
+                const links = getCookie('links');
+                if (links) {
+                    try{
+                        JSON.parse(links).forEach(link => {
+                            addLinkToDOM(link.name, link.url);
+                        });
+                     }catch(e){
+                        console.error("Error parsing links:", e);
+                        setCookie('links', '[]', 30);
+                     }
+                }
+            }
+
+            function saveLinks() {
+                const linksData = [];
+                linksList.querySelectorAll('li').forEach(listItem => {
+                    const name = listItem.querySelector('.link-name').textContent;
+                    const url = listItem.querySelector('a').href;
+                    linksData.push({ name: name, url: url });
+                });
+                setCookie('links', JSON.stringify(linksData), 30);
+            }
+
+            function addLinkToDOM(name, url) {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<span class="link-name">${name}</span>: <a href="${url}" target="_blank">${url}</a> <button class="delete-link">x</button>`;
+                listItem.querySelector('.delete-link').addEventListener('click', () => {
+                    listItem.remove();
+                    saveLinks();
+                });
+                linksList.appendChild(listItem);
+            }
+
+            addLinkButton.addEventListener('click', () => {
+                const name = prompt('Gib den Namen des Links ein:');
+                const url = prompt('Gib die URL des Links ein:');
+                if (name && url) {
+                    addLinkToDOM(name, url);
+                    saveLinks();
+                }
+            });
+
+            linksList.addEventListener('click', (event) => {
+                if (event.target.classList.contains('delete-link')) {
+                    const listItem =event.target.parentNode;
+                    listItem.remove();
+                    saveLinks();
+                }
+            });
+
+            // --- Wetter, Uhrzeit und Datum ---
+            function updateDateTime() {
+                const now = new Date();
+                const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                dateSpan.textContent = now.toLocaleDateString('de-DE', optionsDate);
+                timeSpan.textContent = now.toLocaleTimeString('de-DE', optionsTime);
+                loadAppointments(currentCalendarYear, currentCalendarMonth); //Zeige Termine im Header an
+            }
+
+            function getWeather() {
+                const weatherConditions = ['sonnig', 'wolkig', 'regnerisch', 'neblig'];
+                const temperature = Math.floor(Math.random() * 25) + 5;
+                const condition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+                weatherDiv.textContent = `${condition}, ${temperature}°C`;
+            }
+
+            // --- Cookie-Helferfunktionen ---
+            function setCookie(name, value, days) {
+                let expires = '';
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = '; expires=' + date.toUTCString();
+                }
+                document.cookie = name + '=' + (value || '') + expires + '; path=/';
+            }
+
+            function getCookie(name) {
+                const nameEQ = name + '=';
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
+
+            // --- Export-Funktion ---
+            exportDataButton.addEventListener('click', () => {
+                const data = {
+                    stickyNotes: getCookie('stickyNotes') ? JSON.parse(getCookie('stickyNotes')) : [],
+                    appointments: appointments,
+                    links: getCookie('links') ? JSON.parse(getCookie('links')) : []
+                };
+                const jsonData = JSON.stringify(data);
+                const filename = 'dashboard_data.json';
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert('Daten wurden als dashboard_data.json exportiert!');
+            });
+
+            // --- Initialisierung ---
+            const today = new Date();
+            renderCalendar(today.getFullYear(), today.getMonth());
+            loadNotes();
+            loadLinks();
+            updateDateTime();
+            getWeather();
+            setInterval(updateDateTime, 1000);
+            setInterval(getWeather, 600000);
+
+            const images = [
+                'https://images.unsplash.com/photo-1614850715740-e1b57728093a?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                'https://images.unsplash.com/photo-1560761683-1c88a5362419?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                'https://images.unsplash.com/photo-1542718588-641b99527f71?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+            ];
+            let currentImageIndex = 0;
+
+            setInterval(() => {
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+                document.body.style.backgroundImage = `url(${images[currentImageIndex]})`;
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
