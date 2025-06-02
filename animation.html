@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FloriDevs Animation</title>
+  <!-- Google Font für die Schreibschrift Pacifico -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    /* Setze den Hintergrund auf schwarz */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: black;
+      font-family: 'Pacifico', cursive;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    #text {
+      color: white;
+      font-size: 50px;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span id="text"></span>
+  </div>
+
+  <script>
+    const textElement = document.getElementById("text");
+    const text = "FloriDevs";
+    let currentIndex = 0;
+    let isReversed = false;
+    let typingSpeed = 100; // Geschwindigkeit der Schriftanimation
+
+    // Funktion zum Tippen
+    function typeWriter() {
+      if (!isReversed) {
+        if (currentIndex < text.length) {
+          textElement.textContent += text[currentIndex];
+          currentIndex++;
+          setTimeout(typeWriter, typingSpeed);
+        } else {
+          // Wenn der Text vollständig getippt ist, starte rückwärts
+          setTimeout(reverseWriter, 500); // Kurze Pause, bevor Rückwärts-Animation beginnt
+        }
+      } else {
+        if (currentIndex > 0) {
+          textElement.textContent = textElement.textContent.slice(0, -1);
+          currentIndex--;
+          setTimeout(reverseWriter, typingSpeed);
+        } else {
+          // Wenn rückwärts gelöscht, starten wir wieder von vorne
+          isReversed = false;
+          setTimeout(typeWriter, 500);
+        }
+      }
+    }
+
+    // Funktion für rückwärts löschen
+    function reverseWriter() {
+      isReversed = true;
+      typeWriter();
+    }
+
+    // Initialisiere das Schreiben
+    typeWriter();
+  </script>
+</body>
+</html>
