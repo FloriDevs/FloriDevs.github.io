@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witze zum 404 Lachen - Programmierer-Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Globale Stile & Farben */
+        :root {
+            --primary-color: #6a00ff; /* Ein tiefes Violett */
+            --secondary-color: #e0b0ff; /* Ein helleres Violett */
+            --text-color: #333; /* Dunkler Text */
+            --light-text-color: #f8f8f8; /* Heller Text für dunkle Hintergründe */
+            --card-bg-color: #ffffff; /* Weiß für die Witze-Karten */
+            --shadow-color: rgba(0, 0, 0, 0.1); /* Dezenter Schatten */
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh; /* Mindestens die volle Bildschirmhöhe */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header-Stile */
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+            text-align: center;
+            padding: 2.5rem 1rem;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            animation: fadeInDown 1s ease-out; /* Animation für den Header */
+        }
+
+        header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5rem; /* Große Überschrift */
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Hauptinhaltsbereich (Witze-Grid) */
+        .joke-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsives Grid */
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            flex-grow: 1; /* Nimmt den verfügbaren Platz ein */
+        }
+
+        /* Witze-Karten Stile */
+        .joke-card {
+            background-color: var(--card-bg-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 6px 15px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Übergang für Hover-Effekte */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .joke-card:hover {
+            transform: translateY(-8px); /* Leichtes Anheben beim Hover */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Stärkerer Schatten beim Hover */
+        }
+
+        .joke-card h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-color); /* Unterstrich für Überschrift */
+            padding-bottom: 0.5rem;
+        }
+
+        .joke-card p {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Footer-Stile */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+            text-align: center;
+            padding: 1.5rem 1rem;
+            font-size: 0.9rem;
+            margin-top: auto; /* Sorgt dafür, dass der Footer am unteren Rand bleibt */
+            box-shadow: 0 -4px 8px var(--shadow-color);
+        }
+
+        /* Animation für den Header */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsivität für kleinere Bildschirme */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .joke-grid {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .joke-card {
+                padding: 1rem;
+            }
+
+            .joke-card h2 {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            header p {
+                font-size: 1rem;
+            }
+            .joke-grid {
+                grid-template-columns: 1fr; /* Eine Spalte auf sehr kleinen Bildschirmen */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Witze zum 404 Lachen</h1>
+        <p>Deine tägliche Dosis Humor – speziell für Programmierer!</p>
+    </header>
+
+    <main class="joke-grid">
+        <div class="joke-card">
+            <h2>Der Optimist</h2>
+            <p>Ein Programmierer kommt nach Hause. Seine Frau sagt: "Schatz, geh mal bitte in den Laden und hol 6 Eier. Wenn sie Avocados haben, hol 10." Der Programmierer kommt mit 10 Eiern zurück. Seine Frau fragt: "Warum hast du 10 Eier?" Er antwortet: "Sie hatten Avocados."</p>
+        </div>
+
+        <div class="joke-card">
+            <h2>Debugging</h2>
+            <p>Warum hatte der Entwickler keinen Schlaf?</p>
+            <p>– Weil er nach einem Bug gesucht hat, der sich nicht reproduzieren ließ.</p>
+        </div>
+
+        <div class="joke-card">
+            <h2>Software und Hardware</h2>
+            <p>Ein Software-Entwickler, ein Hardware-Entwickler und ein Manager fahren zusammen im Auto. Plötzlich bleibt das Auto liegen. Der Hardware-Entwickler: "Ich tippe auf ein mechanisches Problem." Der Software-Entwickler: "Ich glaube, ein Software-Update könnte helfen." Der Manager: "Lasst uns aussteigen und wieder einsteigen, vielleicht funktioniert es dann wieder!"</p>
+        </div>
+
+        <div class="joke-card">
+            <h2>Der fehlende Semikolon</h2>
+            <p>Was ist der Lieblings-Witz eines Programmierers?</p>
+            <p>– Ein Code, der funktioniert, aber ein Semikolon fehlt.</p>
+        </div>
+
+        <div class="joke-card">
+            <h2>Der Computer versteht alles</h2>
+            <p>Ein Programmierer sagt zu einem anderen: "Mein Code hat ein ernstes Problem, er funktioniert nicht." Der andere antwortet: "Vielleicht hast du einfach zu viel optimiert." Der erste Programmierer: "Nein, das glaube ich nicht. Der Computer versteht das Problem perfekt!"</p>
+        </div>
+
+        <div class="joke-card">
+            <h2>Die drei Wege</h2>
+            <p>Es gibt 10 Arten von Menschen: Die, die Binärcode verstehen, und die, die es nicht tun.</p>
+        </div>
+
+        <div class="joke-card">
+            <h2>Das letzte Wort</h2>
+            <p>Warum haben Programmierer ein schlechtes Gedächtnis?</p>
+            <p>– Weil sie ständig ihre Caches leeren.</p>
+        </div>
+        <div class="joke-card">
+            <h2>Die Insel</h2>
+            <p>Ein Programmierer sitzt auf einer Insel und sagt </p>
+            <p>– Irgendwie habe ich Java anders in Errinnerung.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Witze zum 404 Lachen. Alle Rechte vorbehalten. | Ein Lächeln ist das beste Accessoire.</p>
+    </footer>
+</body>
+</html>
