@@ -1,0 +1,10 @@
+Wellcome to the Milla web.
+You have succsesfully joined the first webpage of the MillaWeb.
+What is the Milla Web
+          -> The-MillaWeb is a project to share Texts.
+          -> How to host something:
+                    - download the milla web server 
+                    - create a file called index.txt in the same directory
+                    - done
+
+Have fun in the Milla Web
