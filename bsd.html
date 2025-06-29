@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FreeBSD TTY</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #terminal {
+      white-space: pre-wrap;
+      padding: 1rem;
+      height: 100%;
+      overflow-y: auto;
+    }
+    input {
+      background: black;
+      color: white;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: inherit;
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal">
+    FreeBSD 14.0-STABLE (GENERIC) #0: ttyv0
+
+    login: <input id="login" autofocus />
+  </div>
+
+  <script>
+    const terminal = document.getElementById("terminal");
+    const loginInput = document.getElementById("login");
+
+    let username = "";
+    let cwd = ["/", "home", "user"];
+    let installedPackages = {};
+    let fs = {
+      "/": {
+        type: "dir",
+        contents: {
+          home: {
+            user: {}
+          }
+        }
+      }
+    };
+
+    function formatPrompt() {
+      const path = cwd.slice(2).join("/") || "";
+      return `${username}@freebsd:~${path ? "/" + path : ""}% `;
+    }
+
+    function getCurrentDir() {
+      return cwd.reduce((dir, key) => dir.contents?.[key], fs["/"]);
+    }
+
+    function resolvePath(path) {
+      if (!path) return cwd;
+      if (path.startsWith("/")) return path.split("/").filter(Boolean);
+      const base = [...cwd];
+      for (const part of path.split("/")) {
+        if (part === "..") base.pop();
+        else if (part !== "." && part !== "") base.push(part);
+      }
+      return base;
+    }
+
+    function getDirAndName(pathArr) {
+      const name = pathArr.pop();
+      const parent = pathArr.reduce((dir, key) => dir.contents?.[key], fs["/"]);
+      return [parent, name];
+    }
+
+    function print(text = "") {
+      terminal.innerHTML += text + "\n";
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function inputLine() {
+      const line = document.createElement("div");
+      const prompt = formatPrompt();
+      line.innerHTML = `<span>${prompt}</span><input class="cmd" />`;
+      terminal.appendChild(line);
+      const input = line.querySelector("input");
+      input.focus();
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const cmd = input.value;
+          line.innerHTML = `<span>${prompt}${cmd}</span>`;
+          handleCommand(cmd.trim());
+        }
+      });
+    }
+
+    loginInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        username = loginInput.value.trim() || "user";
+        terminal.innerHTML += `\nWelcome to FreeBSD!\n\n`;
+        loginInput.remove();
+        inputLine();
+      }
+    });
+
+    function handleCommand(cmdLine) {
+      const [cmd, ...args] = cmdLine.split(/\s+/);
+      const out = [];
+
+      switch (cmd) {
+        case "pwd":
+          out.push("/" + cwd.slice(1).join("/"));
+          break;
+        case "ls": {
+          const target = args[0] ? resolvePath(args[0]) : cwd;
+          let d = fs["/"];
+          for (const part of target) d = d.contents?.[part];
+          if (!d || d.type === "file") out.push("ls: Not a directory");
+          else out.push(Object.keys(d.contents).join("  "));
+          break;
+        }
+        case "cd": {
+          const path = resolvePath(args[0] || "/");
+          let d = fs["/"];
+          for (const part of path) d = d.contents?.[part];
+          if (!d || d.type === "file") out.push("cd: No such directory");
+          else cwd = ["/", ...path];
+          break;
+        }
+        case "mkdir":
+          if (!args[0]) out.push("mkdir: missing operand");
+          else {
+            const pathArr = resolvePath(args[0]);
+            const [parent, name] = getDirAndName([...pathArr]);
+            if (parent && parent.contents) parent.contents[name] = { type: "dir", contents: {} };
+            else out.push("mkdir: error creating directory");
+          }
+          break;
+        case "touch":
+          if (!args[0]) out.push("touch: missing file operand");
+          else {
+            const pathArr = resolvePath(args[0]);
+            const [parent, name] = getDirAndName([...pathArr]);
+            if (parent && parent.contents) parent.contents[name] = { type: "file", content: "" };
+            else out.push("touch: error creating file");
+          }
+          break;
+        case "rm":
+          if (!args[0]) out.push("rm: missing operand");
+          else {
+            const pathArr = resolvePath(args[0]);
+            const [parent, name] = getDirAndName([...pathArr]);
+            if (parent?.contents?.[name]) delete parent.contents[name];
+            else out.push("rm: file not found");
+          }
+          break;
+        case "cat":
+          if (!args[0]) out.push("cat: missing file operand");
+          else {
+            const pathArr = resolvePath(args[0]);
+            const file = pathArr.reduce((dir, key) => dir.contents?.[key], fs["/"]);
+            if (!file || file.type !== "file") out.push("cat: not a file");
+            else out.push(file.content || "");
+          }
+          break;
+        case "pkg":
+          if (args[0] === "install" && args[1] === "nano") {
+            installedPackages["nano"] = true;
+            out.push("nano installed successfully.");
+          } else {
+            out.push("pkg: unknown command");
+          }
+          break;
+        case "nano":
+          if (!installedPackages["nano"]) out.push("nano: command not found");
+          else out.push("nano (simulated editor)");
+          break;
+        case "echo":
+          out.push(args.join(" "));
+          break;
+        case "clear":
+          terminal.innerHTML = "";
+          return inputLine();
+        case "help":
+          out.push("Commands: pwd, ls, cd, mkdir, touch, rm, cat, echo, pkg install nano, nano, clear");
+          break;
+        case "":
+          break;
+        default:
+          out.push(`${cmd}: command not found`);
+      }
+
+      out.forEach(print);
+      inputLine();
+    }
+  </script>
+</body>
+</html>
