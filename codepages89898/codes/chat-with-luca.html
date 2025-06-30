@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2004 Chatbot</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #f0f0f0;
+      color: #000000;
+      margin: 0;
+      padding: 0;
+    }
+
+    #chat {
+      width: 100%;
+      height: 80vh;
+      overflow-y: auto;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      margin: 20px auto;
+      max-width: 500px;
+      display: none; /* Chat wird erst nach der Ladeanimation angezeigt */
+    }
+
+    .message {
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      background-color: #e5e5e5;
+      width: fit-content;
+      max-width: 90%;
+      border-radius: 5px;
+    }
+
+    .user {
+      background-color: #c8e0a2;
+      text-align: right;
+    }
+
+    .bot {
+      background-color: #f1f1f1;
+    }
+
+    #input-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+    }
+
+    input {
+      width: 70%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 14px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .dots {
+      font-size: 32px;
+      animation: loadingAnimation 1.5s infinite steps(5, end);
+    }
+
+    @keyframes loadingAnimation {
+      0% { content: '.'; }
+      25% { content: '..'; }
+      50% { content: '...'; }
+      75% { content: '....'; }
+      100% { content: '.....'; }
+    }
+
+    @media screen and (max-width: 600px) {
+      #chat {
+        height: 70vh;
+        width: 100%;
+      }
+      input {
+        width: 60%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading">
+    Chatroom 25 – Wir sind gerade maßlos überlastet, bitte warten...
+    <div class="dots">...</div>
+  </div>
+
+  <div id="chat"></div>
+
+  <div id="input-area">
+    <input id="userInput" type="text" placeholder="Schreib was...">
+    <button onclick="sendMessage()">Senden</button>
+  </div>
+
+  <script>
+    // Variablen für Verzögerungen (minTime und maxTime)
+    const minTime = 2;  // Minimale Zeit für die Antwortverzögerung (in Sekunden)
+    const maxTime = 5; // Maximale Zeit für die Antwortverzögerung (in Sekunden)
+
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('userInput');
+    const loading = document.getElementById('loading');
+    const dots = document.querySelector('.dots');
+    
+    const keywordPairs = [
+      {
+        keywords: ['date'],
+        response: 'Ein Date? Haha, du bist echt zu süß, aber du hast echt keine Chance.'
+      },
+      {
+        keywords: ['Wieso', "Chat"],
+        response: 'Weil ich zu beschäftigt bin, dir zuzuhören. Du bist einfach nicht mein Typ.'
+      },
+      {
+        keywords: ['Liebe'],
+        response: 'Liebe? Du bist ja noch nicht mal interessant genug, um mich zu beeindrucken.'
+        
+      },
+      {
+        keywords: ['verlieben'],
+        response: 'Verlieben? Das ist süß, aber du bist einfach zu langweilig dafür.'
+      },
+      {
+        keywords: ['Kuss', 'küssen'],
+        response: 'Küsse? Bitte, versuch doch nicht, süß zu sein, das kommt bei mir nicht an.'
+      },
+      {
+        keywords: ['Beziehung'],
+        response: 'Beziehung? Ich glaube nicht, dass du das Zeug dazu hast, auch nur in einer Freundschaft zu bleiben.'
+      },
+      {
+        keywords: ['was geht'],
+        response: 'Was geht? Du bist einfach nur nervig, das geht.'
+      },
+      {
+        keywords: ['Traumfrau'],
+        response: 'Traumfrau? Du bist nicht mal auf der Liste, tut mir leid.'
+      },
+      {
+        keywords: ['verstehen'],
+        response: 'Verstehen? Oh, du meinst, du willst wirklich verstehen, warum du mich so langweilst?'
+      }
+      
+    ];
+
+    const defaultReplies = [
+      "Warum redest du überhaupt noch mit mir?",
+      "Oh, du willst was von mir? Denk nicht mal dran.",
+      "Du redest viel, aber keiner hört hin.",
+      "Echt jetzt? Du willst das nochmal versuchen?",
+      "Komm schon, du verschwendest gerade nur meine Zeit."
+    ];
+
+    const greetingReplies = [
+      "Oh, hallo? Was für eine Überraschung…",
+      "Ja, hallo. Was willst du?",
+      "Toll, noch jemand der 'Hallo' sagt. Warum bist du hier?",
+      "Warum schreibst du überhaupt? Das war so unnötig."
+    ];
+
+    function sendMessage() {
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      addMessage(userText, 'user');
+      input.value = '';
+
+      // Prüfen, ob es sich um eine Begrüßung handelt
+      const greetings = ['hallo', 'hi', 'guten morgen', 'moin'];
+      const isGreeting = greetings.some(greeting => userText.toLowerCase().includes(greeting));
+
+      let response;
+
+      if (isGreeting) {
+        response = greetingReplies[Math.floor(Math.random() * greetingReplies.length)];
+      } else {
+        response = getResponse(userText);
+      }
+
+      // Zeige "tippt..." für 15-20 Sekunden an
+      const typingMsg = document.createElement('div');
+      typingMsg.className = 'message bot';
+      typingMsg.id = 'typing';
+      typingMsg.textContent = '... schreibt';
+      chat.appendChild(typingMsg);
+      chat.scrollTop = chat.scrollHeight;
+
+      const typingDelay = Math.floor(Math.random() * (20 - 15 + 1) + 15) * 1000;
+
+      setTimeout(() => {
+        const typing = document.getElementById('typing');
+        if (typing) typing.remove();
+
+        const delay = Math.floor(Math.random() * (maxTime - minTime + 1) + minTime) * 1000;
+
+        setTimeout(() => {
+          addMessage(response, 'bot');
+          saveChat();
+        }, delay);
+      }, typingDelay);
+    }
+
+    function getResponse(userText) {
+      const lowerText = userText.toLowerCase();
+
+      for (const pair of keywordPairs) {
+        if (pair.keywords.every(kw => lowerText.includes(kw))) {
+          return pair.response;
+        }
+      }
+
+      return defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
+    }
+
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function saveChat() {
+      const messages = [];
+      document.querySelectorAll('.message').forEach(msg => {
+        messages.push(msg.textContent);
+      });
+      document.cookie = "chatHistory=" + JSON.stringify(messages) + "; path=/";
+    }
+
+    function loadChat() {
+      const cookie = document.cookie.split('; ').find(row => row.startsWith('chatHistory='));
+      if (cookie) {
+        const chatHistory = JSON.parse(cookie.split('=')[1]);
+        chatHistory.forEach(msg => addMessage(msg, 'bot'));
+      }
+    }
+
+    function showLoadingScreen() {
+      const skipLoad = window.location.hash === '#skipload';
+
+      if (skipLoad) {
+        loading.style.display = 'none';
+        chat.style.display = 'block';
+      } else {
+        const loadingTime = Math.random() * (300000 - 20000) + 20000; // Zufällige Zeit zwischen 20 Sek und 5 Minuten
+        setTimeout(() => {
+          loading.style.display = 'none';
+          chat.style.display = 'block';
+        }, loadingTime);
+      }
+    }
+
+    loadChat();
+    showLoadingScreen();
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+
+</body>
+</html>
