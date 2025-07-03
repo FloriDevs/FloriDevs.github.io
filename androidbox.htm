@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Grundlegende Stile für den Body und den Vollbild-Simulator */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212; /* Dunkler Hintergrund für das Browserfenster */
+            margin: 0;
+            overflow: hidden; /* Verhindert Scrollbalken im Body */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #e0e0e0; /* Standardtextfarbe für den Dark Mode */
+        }
+
+        /* Der Simulator selbst füllt nun den gesamten Bildschirm */
+        .screen {
+            width: 100vw; /* Volle Breite des Viewports */
+            height: 100vh; /* Volle Höhe des Viewports */
+            background-color: #1a1a1a; /* Dunklerer Hintergrund für den Simulatorbildschirm */
+            border-radius: 0; /* Keine abgerundeten Ecken im Vollbildmodus */
+            margin: 0; /* Kein Rand */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Statusleiste oben */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: rgba(26, 26, 26, 0.9); /* Dunkler, leicht transparenter Hintergrund */
+            backdrop-filter: blur(10px);
+            font-size: 0.8rem;
+            color: #e0e0e0; /* Heller Text für die Statusleiste */
+            z-index: 5;
+            border-bottom: 1px solid #3a3a3a; /* Dunklerer Rand */
+        }
+
+        /* Startbildschirm mit App-Icons */
+        .home-screen {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            padding: 20px;
+            /* Hintergrundbild vom Pixel 3a (oder ähnlich) */
+            background-image: url('https://tse2.mm.bing.net/th/id/OIP.1GMB8znNnhIqpfwOCqiergHaDt?r=0&pid=Api');
+            background-size: cover;
+            background-position: center;
+            align-content: start;
+            justify-items: center;
+        }
+
+        /* Stil für App-Icons */
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            width: 60px;
+            text-align: center;
+        }
+
+        .app-icon img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .app-icon img:hover {
+            transform: scale(1.05);
+        }
+
+        .app-icon span {
+            font-size: 0.7rem;
+            color: #ffffff; /* Sicherstellen, dass der Text der App-Icons weiß ist */
+            margin-top: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
+        /* App-Bildschirme (Browser, Kamera, Einstellungen) */
+        .app-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a; /* Dunkler Hintergrund für App-Bildschirme */
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%); /* Standardmäßig außerhalb des Bildschirms */
+            transition: transform 0.3s ease-in-out;
+            z-index: 20;
+        }
+
+        .app-screen.active {
+            transform: translateX(0); /* Aktiv: auf dem Bildschirm */
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #2c2c2c; /* Etwas helleres Dunkel für den Header */
+            border-bottom: 1px solid #3a3a3a;
+            gap: 10px;
+        }
+
+        .app-header button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #e0e0e0; /* Heller Button-Text */
+        }
+
+        .app-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e0e0e0; /* Heller Header-Text */
+            flex-grow: 1;
+        }
+
+        .app-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: #1a1a1a; /* Dunkler Hintergrund für App-Inhalte */
+            color: #e0e0e0; /* Heller Text für App-Inhalte */
+        }
+
+        /* Spezifische Stile für den Browser */
+        .browser-address-bar {
+            display: flex;
+            padding: 10px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .browser-address-bar input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            background-color: #2c2c2c;
+            border: 1px solid #555;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            outline: none;
+            color: #e0e0e0;
+        }
+
+        .browser-address-bar button {
+            background-color: #007bff; /* Blau für Browser-Aktion */
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .browser-address-bar button:hover {
+            background-color: #0056b3;
+        }
+
+        .browser-iframe {
+            width: 100%;
+            height: calc(100% - 50px); /* Höhe basierend auf der Adressleiste anpassen */
+            border: none;
+        }
+
+        /* Spezifische Stile für die Kamera */
+        .camera-preview {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .camera-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Spiegeleffekt für die Selfie-Kamera */
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .camera-button {
+            width: 60px;
+            height: 60px;
+            background-color: #3a3a3a;
+            border-radius: 50%;
+            border: 5px solid #555;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: #e0e0e0;
+        }
+
+        .camera-button:hover {
+            border-color: #888;
+        }
+
+        .camera-button.shutter {
+            border-color: #f00;
+        }
+
+        .camera-button.shutter:active {
+            background-color: #eee;
+        }
+
+        /* Spezifische Stile für die Einstellungen */
+        .settings-list {
+            padding: 15px;
+            color: #e0e0e0;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #3a3a3a;
+            cursor: pointer;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item span {
+            font-size: 1rem;
+            color: #e0e0e0;
+        }
+
+        .settings-item .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+        }
+
+        .settings-item .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .settings-item .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .settings-item .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .settings-item input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        .settings-item input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        .settings-item input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+
+        /* Nachrichtenbox (ersetzt alert()) */
+        .message-box-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dunkleres Overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease-in-out;
+        }
+
+        .message-box-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .message-box {
+            background-color: #2c2c2c; /* Dunklere Nachrichtenbox */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 80%;
+            color: #e0e0e0;
+        }
+
+        .message-box h3 {
+            margin-top: 0;
+            color: #e0e0e0;
+        }
+
+        .message-box button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .message-box button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Neue Navigationsleiste unten */
+        .nav-bar {
+            width: 100%;
+            height: 50px; /* Standardhöhe der Navigationsleiste */
+            background-color: #222222; /* Dunkler Hintergrund */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #3a3a3a;
+            z-index: 10;
+            position: relative; /* Stellt sicher, dass sie am unteren Rand des Flex-Containers ist */
+        }
+
+        .nav-bar button {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #e0e0e0; /* Helle Icons */
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 50%; /* Rund machen */
+            transition: background-color 0.2s;
+        }
+
+        .nav-bar button:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Neues Benachrichtigungsfeld / Kontrollfeld */
+        .notification-shade {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; /* Volle Höhe des Bildschirms */
+            background-color: rgba(0, 0, 0, 0.95); /* Semi-transparenter dunkler Overlay */
+            color: #e0e0e0;
+            z-index: 90; /* Unter der Nachrichtenbox, über den Apps */
+            transform: translateY(-100%); /* Anfangs über dem Bildschirm versteckt */
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            padding-top: 40px; /* Platz für die Statusleiste */
+        }
+
+        .notification-shade.active {
+            transform: translateY(0); /* Aktiv: auf dem Bildschirm */
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .notification-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .notification-header button {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+
+        .quick-settings {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 15px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .setting-tile {
+            background-color: #2c2c2c;
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .setting-tile:hover {
+            background-color: #3a3a3a;
+        }
+
+        .brightness-slider {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brightness-slider input[type="range"] {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #555;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .brightness-slider input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        .brightness-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+        }
+
+        .brightness-slider input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="screen">
+        <!-- Statusleiste -->
+        <div class="status-bar" id="statusBar">
+            <span id="time">12:00</span>
+            <span>📶 LTE</span>
+            <span>🔋 85%</span>
+        </div>
+
+        <!-- Startbildschirm -->
+        <div class="home-screen" id="homeScreen">
+            <!-- App-Icons werden hier von JavaScript gerendert -->
+        </div>
+
+        <!-- Android Navigationsleiste -->
+        <div class="nav-bar">
+            <button onclick="goBack()">&#x2190;</button> <!-- Zurück -->
+            <button onclick="goHome()">&#x25CF;</button> <!-- Home -->
+            <button onclick="showRecents()">&#x229D;</button> <!-- Zuletzt (Platzhalter) -->
+        </div>
+
+        <!-- Benachrichtigungsfeld / Kontrollfeld -->
+        <div class="notification-shade" id="notificationShade">
+            <div class="notification-header">
+                <h3>Benachrichtigungen & Schnelleinstellungen</h3>
+                <button onclick="toggleNotificationShade(false)">&#x2191;</button>
+            </div>
+            <div class="quick-settings">
+                <div class="setting-tile">WLAN</div>
+                <div class="setting-tile">Bluetooth</div>
+                <div class="setting-tile">Daten</div>
+                <div class="setting-tile">Flugmodus</div>
+            </div>
+            <div class="brightness-slider">
+                <span>Helligkeit</span>
+                <input type="range" min="0" max="100" value="70" class="slider">
+            </div>
+        </div>
+
+        <!-- Browser App Bildschirm -->
+        <div class="app-screen" id="browserApp">
+            <div class="app-header">
+                <button onclick="goHome()">&#x2190;</button>
+                <h2>Browser</h2>
+            </div>
+            <div class="browser-address-bar">
+                <input type="text" id="browserUrlInput" value="https://wiby.me" placeholder="Geben Sie eine URL ein">
+                <button onclick="loadBrowserUrl()">Gehe</button>
+            </div>
+            <iframe id="browserIframe" class="browser-iframe" src="https://wiby.me"></iframe>
+        </div>
+
+        <!-- Kamera App Bildschirm -->
+        <div class="app-screen" id="cameraApp">
+            <div class="app-header">
+                <button onclick="goHome()">&#x2190;</button>
+                <h2>Kamera</h2>
+            </div>
+            <div class="app-content camera-preview">
+                <video id="cameraVideo" autoplay playsinline></video>
+                <div class="camera-controls">
+                    <button class="camera-button shutter" onclick="takePhoto()">&#x25CF;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Einstellungen App Bildschirm -->
+        <div class="app-screen" id="settingsApp">
+            <div class="app-header">
+                <button onclick="goHome()">&#x2190;</button>
+                <h2>Einstellungen</h2>
+            </div>
+            <div class="app-content settings-list">
+                <div class="settings-item">
+                    <span>WLAN</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <span>Bluetooth</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <span>Benachrichtigungen</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <span>Hintergrundbild ändern</span>
+                </div>
+                <div class="settings-item">
+                    <span>Über das Telefon</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nachrichtenbox für Alerts -->
+        <div class="message-box-overlay" id="messageBoxOverlay">
+            <div class="message-box">
+                <h3 id="messageBoxTitle">Nachricht</h3>
+                <p id="messageBoxContent"></p>
+                <button onclick="hideMessageBox()">OK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Globale Variablen für den App-Zustand
+        let currentApp = null;
+        let cameraStream = null;
+        let notificationShade = null; // Referenz auf das Benachrichtigungsfeld
+        let isDraggingShade = false; // Flag für den Ziehvorgang des Benachrichtigungsfeldes
+        let dragStartY = 0; // Start-Y-Koordinate des Ziehvorgangs
+
+        // Funktion zum Anzeigen einer benutzerdefinierten Nachrichtenbox
+        function showMessageBox(title, message) {
+            document.getElementById('messageBoxTitle').innerText = title;
+            document.getElementById('messageBoxContent').innerText = message;
+            document.getElementById('messageBoxOverlay').classList.add('active');
+        }
+
+        // Funktion zum Ausblenden der benutzerdefinierten Nachrichtenbox
+        function hideMessageBox() {
+            document.getElementById('messageBoxOverlay').classList.remove('active');
+        }
+
+        // App-Daten mit verbesserten Platzhalter-Icons (TouchWiz 1.0 inspiriert)
+        const apps = [
+            { id: 'browser', name: 'Browser', icon: 'https://placehold.co/48x48/1a73e8/ffffff?text=🌐', screenId: 'browserApp' },
+            { id: 'camera', name: 'Kamera', icon: 'https://placehold.co/48x48/ea4335/ffffff?text=📷', screenId: 'cameraApp' },
+            { id: 'settings', name: 'Einstellungen', icon: 'https://placehold.co/48x48/5f6368/ffffff?text=⚙️', screenId: 'settingsApp' },
+            { id: 'gallery', name: 'Galerie', icon: 'https://placehold.co/48x48/34a853/ffffff?text=🖼️', screenId: 'galleryApp' },
+            { id: 'messages', name: 'Nachrichten', icon: 'https://placehold.co/48x48/fbbc04/ffffff?text=💬', screenId: 'messagesApp' },
+            { id: 'phone', name: 'Telefon', icon: 'https://placehold.co/48x48/dc3545/ffffff?text=📞', screenId: 'phoneApp' },
+        ];
+
+        // App-Icons auf dem Startbildschirm rendern
+        function renderAppIcons() {
+            const homeScreen = document.getElementById('homeScreen');
+            homeScreen.innerHTML = ''; // Vorhandene Icons löschen
+            apps.forEach(app => {
+                const appIconDiv = document.createElement('div');
+                appIconDiv.classList.add('app-icon');
+                appIconDiv.onclick = () => openApp(app.id);
+
+                const img = document.createElement('img');
+                img.src = app.icon;
+                img.alt = app.name + ' Icon';
+
+                const span = document.createElement('span');
+                span.textContent = app.name;
+
+                appIconDiv.appendChild(img);
+                appIconDiv.appendChild(span);
+                homeScreen.appendChild(appIconDiv);
+            });
+        }
+
+        // Eine bestimmte App öffnen
+        async function openApp(appId) {
+            // Aktuelle App ausblenden, falls vorhanden
+            if (currentApp) {
+                document.getElementById(currentApp.screenId).classList.remove('active');
+                // Kamerastream stoppen, falls aktiv
+                if (currentApp.id === 'camera' && cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
+                    document.getElementById('cameraVideo').srcObject = null;
+                }
+            }
+
+            const appToOpen = apps.find(app => app.id === appId);
+            if (appToOpen) {
+                currentApp = appToOpen;
+                const appScreen = document.getElementById(appToOpen.screenId);
+                if (appScreen) {
+                    appScreen.classList.add('active');
+                    // Spezielle Behandlung für die Kamera-App
+                    if (appId === 'camera') {
+                        try {
+                            const video = document.getElementById('cameraVideo');
+                            cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                            video.srcObject = cameraStream;
+                        } catch (err) {
+                            console.error("Fehler beim Zugriff auf die Kamera: ", err);
+                            showMessageBox("Kamerafehler", "Zugriff auf die Kamera verweigert oder nicht verfügbar.");
+                            goHome(); // Zum Startbildschirm zurückkehren, wenn der Kamerazugriff fehlschlägt
+                        }
+                    }
+                } else {
+                    showMessageBox("Fehler", `App "${appToOpen.name}" konnte nicht gefunden werden.`);
+                    currentApp = null; // Aktuelle App zurücksetzen
+                }
+            } else {
+                showMessageBox("Fehler", "Diese App existiert nicht.");
+                currentApp = null; // Aktuelle App zurücksetzen
+            }
+        }
+
+        // Zum Startbildschirm zurückkehren
+        function goHome() {
+            if (currentApp) {
+                document.getElementById(currentApp.screenId).classList.remove('active');
+                // Kamerastream stoppen, falls aktiv
+                if (currentApp.id === 'camera' && cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
+                    document.getElementById('cameraVideo').srcObject = null;
+                }
+                currentApp = null;
+            }
+            // Sicherstellen, dass das Benachrichtigungsfeld geschlossen ist, wenn man nach Hause geht
+            toggleNotificationShade(false);
+        }
+
+        // Einfache Zurück-Funktion (für die Navigationsleiste)
+        function goBack() {
+            // In einer echten App würde dies die Browser-Historie navigieren oder die aktuelle App schließen
+            // Für diesen Simulator gehen wir einfach nach Hause
+            goHome();
+        }
+
+        // Platzhalter für die Schaltfläche "Zuletzt"
+        function showRecents() {
+            showMessageBox("Zuletzt", "Diese Funktion ist noch nicht implementiert.");
+        }
+
+        // Uhrzeit in der Statusleiste aktualisieren
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}`;
+        }
+
+        // Browser-Funktionen
+        function loadBrowserUrl() {
+            const urlInput = document.getElementById('browserUrlInput');
+            let url = urlInput.value;
+            // http:// oder https:// hinzufügen, falls nicht vorhanden
+            if (!url.match(/^(http:\/\/|https:\/\/)/)) {
+                url = 'https://' + url;
+            }
+            document.getElementById('browserIframe').src = url;
+        }
+
+        // Kamera-Funktionen
+        function takePhoto() {
+            if (cameraStream) {
+                const video = document.getElementById('cameraVideo');
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                // In einer echten App würde dieses Bild gespeichert oder angezeigt werden.
+                // Für diesen Simulator zeigen wir nur eine Nachricht.
+                showMessageBox("Foto aufgenommen!", "Dein Foto wurde gespeichert (simuliert).");
+            } else {
+                showMessageBox("Kamera nicht aktiv", "Bitte öffne die Kamera-App, um ein Foto zu machen.");
+            }
+        }
+
+        // Funktionen für das Benachrichtigungsfeld
+        function toggleNotificationShade(open) {
+            if (open) {
+                notificationShade.classList.add('active');
+            } else {
+                notificationShade.classList.remove('active');
+            }
+        }
+
+        function startShadeDrag(e) {
+            // Nur Ziehen zulassen, wenn keine App aktiv ist
+            if (currentApp === null) {
+                isDraggingShade = true;
+                dragStartY = e.clientY || e.touches[0].clientY;
+                notificationShade.style.transition = 'none'; // Übergang während des Ziehens deaktivieren
+            }
+        }
+
+        function moveShadeDrag(e) {
+            if (!isDraggingShade) return;
+            const currentY = e.clientY || e.touches[0].clientY;
+            const diffY = currentY - dragStartY;
+
+            if (notificationShade.classList.contains('active')) {
+                // Wenn das Feld offen ist, sollte das Hochziehen es nach oben bewegen
+                notificationShade.style.transform = `translateY( ${Math.min(0, diffY)}px )`;
+            } else {
+                // Wenn das Feld geschlossen ist, sollte das Herunterziehen es nach unten bewegen
+                notificationShade.style.transform = `translateY( ${Math.min(0, -window.innerHeight + diffY)}px )`;
+            }
+        }
+
+        function endShadeDrag() {
+            if (!isDraggingShade) return;
+            isDraggingShade = false;
+            notificationShade.style.transition = 'transform 0.3s ease-in-out'; // Übergang wieder aktivieren
+
+            const currentTransformY = parseFloat(notificationShade.style.transform.replace('translateY(', '').replace('px)', '')) || 0;
+
+            if (notificationShade.classList.contains('active')) {
+                // Wenn es offen war und deutlich nach oben gezogen wurde, schließen
+                if (currentTransformY < -notificationShade.offsetHeight * 0.2) { // Wenn mehr als 20% nach oben gezogen
+                    toggleNotificationShade(false);
+                } else {
+                    toggleNotificationShade(true); // Zurück zur offenen Position schnappen
+                }
+            } else {
+                // Wenn es geschlossen war und deutlich nach unten gezogen wurde, öffnen
+                if (currentTransformY > -window.innerHeight * 0.8) { // Wenn mehr als 20% von oben nach unten gezogen
+                    toggleNotificationShade(true);
+                } else {
+                    toggleNotificationShade(false); // Zurück zur geschlossenen Position schnappen
+                }
+            }
+        }
+
+
+        // Erstmalige Einrichtung
+        document.addEventListener('DOMContentLoaded', () => {
+            notificationShade = document.getElementById('notificationShade'); // Referenz holen
+            renderAppIcons();
+            updateTime();
+            setInterval(updateTime, 60000); // Uhrzeit jede Minute aktualisieren
+
+            const statusBar = document.getElementById('statusBar');
+            statusBar.addEventListener('mousedown', startShadeDrag);
+            statusBar.addEventListener('touchstart', startShadeDrag);
+
+            notificationShade.addEventListener('mousedown', startShadeDrag); // Ziehen vom Feld selbst erlauben
+            notificationShade.addEventListener('touchstart', startShadeDrag);
+
+            document.addEventListener('mousemove', moveShadeDrag);
+            document.addEventListener('touchmove', moveShadeDrag);
+
+            document.addEventListener('mouseup', endShadeDrag);
+            document.addEventListener('touchend', endShadeDrag);
+        });
+    </script>
+</body>
+</html>
