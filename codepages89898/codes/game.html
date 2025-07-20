@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lama Welt - Survival Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #87CEEB, #98FB98);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .world {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            background-image: url('https://cdn.pixabay.com/photo/2014/02/27/16/09/grass-275986_1280.jpg');
+            background-size: 200px 200px; /* Größe der Gras-Textur */
+            /* Removed transform transition as we will use background-position */
+            image-rendering: pixelated; /* Für schärfere Pixel-Texturen */
+        }
+
+        .world.night {
+            filter: brightness(0.3) hue-rotate(240deg);
+        }
+
+        .lama {
+            width: 50px;
+            height: 50px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            z-index: 10;
+            transition: transform 0.2s ease;
+        }
+
+        .lama.baby {
+            font-size: 30px;
+        }
+
+        .lama.teen {
+            font-size: 40px;
+        }
+
+        .lama.adult {
+            font-size: 50px;
+        }
+
+        .object {
+            position: absolute;
+            font-size: 30px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .object:hover {
+            transform: scale(1.2);
+        }
+
+        .monster {
+            position: absolute;
+            font-size: 40px;
+            cursor: pointer;
+            animation: monsterMove 3s infinite alternate;
+        }
+
+        @keyframes monsterMove {
+            0% { transform: translateX(0) rotate(0deg); }
+            100% { transform: translateX(30px) rotate(10deg); }
+        }
+
+        .building {
+            position: absolute;
+            font-size: 60px;
+            z-index: 5;
+        }
+
+        .ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            min-width: 350px;
+        }
+
+        .stat-bar {
+            background: #ddd;
+            height: 18px;
+            border-radius: 10px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .hunger-fill { background: #ff6b6b; }
+        .happiness-fill { background: #4ecdc4; }
+        .energy-fill { background: #45b7d1; }
+        .health-fill { background: #ff4757; }
+        .age-fill { background: #ffa502; }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .btn {
+            background: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background: #45a049;
+        }
+
+        .save-btn { background: #2196F3; }
+        .save-btn:hover { background: #1976D2; }
+
+        .attack-btn { background: #f44336; }
+        .attack-btn:hover { background: #d32f2f; }
+
+        .build-btn { background: #9c27b0; }
+        .build-btn:hover { background: #7b1fa2; }
+
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 18px;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .inventory {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            max-width: 250px;
+        }
+
+        .crafting {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            max-width: 200px;
+        }
+
+        .weather {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            text-align: center;
+        }
+
+        .craft-recipe {
+            background: #f0f0f0;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .craft-recipe:hover {
+            background: #e0e0e0;
+        }
+
+        .age-indicator {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .quest-log {
+            position: fixed;
+            bottom: 150px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            max-width: 300px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .bounce {
+            animation: bounce 0.6s;
+        }
+
+        @keyframes damage {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); filter: hue-rotate(0deg); }
+            100% { transform: translate(-50%, -50%) scale(1); filter: hue-rotate(360deg); }
+        }
+
+        .damage {
+            animation: damage 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="world" id="world"></div>
+        <div class="lama baby" id="lama">🦙</div>
+        
+        <div class="ui">
+            <h3>🦙 Mein Lama</h3>
+            <div>
+                <strong>Hunger:</strong>
+                <div class="stat-bar">
+                    <div class="stat-fill hunger-fill" id="hungerBar"></div>
+                </div>
+                <span id="hungerValue">100</span>%
+            </div>
+            <div>
+                <strong>Glück:</strong>
+                <div class="stat-bar">
+                    <div class="stat-fill happiness-fill" id="happinessBar"></div>
+                </div>
+                <span id="happinessValue">100</span>%
+            </div>
+            <div>
+                <strong>Energie:</strong>
+                <div class="stat-bar">
+                    <div class="stat-fill energy-fill" id="energyBar"></div>
+                </div>
+                <span id="energyValue">100</span>%
+            </div>
+            <div>
+                <strong>Gesundheit:</strong>
+                <div class="stat-bar">
+                    <div class="stat-fill health-fill" id="healthBar"></div>
+                </div>
+                <span id="healthValue">100</span>%
+            </div>
+            <div>
+                <strong>Alter:</strong>
+                <div class="stat-bar">
+                    <div class="stat-fill age-fill" id="ageBar"></div>
+                </div>
+                <span id="ageValue">0</span>/<span id="ageMax">100</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <strong>Level:</strong> <span id="level">1</span><br>
+                <strong>XP:</strong> <span id="xp">0</span>/100<br>
+                <strong>Coins:</strong> <span id="coins">20</span> 🪙
+            </div>
+            <div class="age-indicator" id="ageIndicator">🍼 Baby Lama</div>
+        </div>
+
+        <div class="inventory">
+            <h4>🎒 Inventar</h4>
+            <div id="inventoryItems"></div>
+        </div>
+
+        <div class="crafting">
+            <h4>🔨 Crafting</h4>
+            <div id="craftingRecipes"></div>
+        </div>
+
+        <div class="quest-log">
+            <h4>📋 Aufgaben</h4>
+            <div id="questList"></div>
+        </div>
+
+        <div class="weather">
+            <div id="timeDisplay">🌅 Tag</div>
+            <div id="weatherDisplay">☀️ Sonnig</div>
+            <div>Tag <span id="dayCounter">1</span></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="moveUp()">⬆️</button>
+            <button class="btn" onclick="moveLeft()">⬅️</button>
+            <button class="btn" onclick="moveDown()">⬇️</button>
+            <button class="btn" onclick="moveRight()">➡️</button>
+            <button class="btn attack-btn" onclick="attack()" id="attackBtn" style="display:none;">⚔️ Angriff</button>
+            <button class="btn build-btn" onclick="toggleBuildMode()" id="buildBtn">🏗️ Bauen</button>
+            <br>
+            <button class="btn save-btn" onclick="saveGame()">💾</button>
+            <button class="btn save-btn" onclick="loadGame()">📁</button>
+            <button class="btn save-btn" onclick="downloadSave()">📥</button>
+            <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="uploadSave(event)">
+            <button class="btn save-btn" onclick="document.getElementById('fileInput').click()">📤</button>
+        </div>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        let gameState = {
+            hunger: 100,
+            happiness: 100,
+            energy: 100,
+            health: 100,
+            age: 0,
+            ageStage: 'baby', // baby, teen, adult, elder
+            level: 1,
+            xp: 0,
+            coins: 20,
+            inventory: {},
+            worldX: 0,
+            worldY: 0,
+            day: 1,
+            timeOfDay: 'day', // day, night
+            weather: 'sunny',
+            buildings: [],
+            achievements: [],
+            quests: [],
+            buildMode: false,
+            monstersKilled: 0
+        };
+
+        const worldSize = 400; // 400vw x 400vh
+        let monsters = [];
+        let buildingMode = false;
+
+        // Erweiterte Weltgegenstände
+        const worldObjects = [
+            { type: 'grass', emoji: '🌱', x: 300, y: 200 },
+            { type: 'apple', emoji: '🍎', x: 500, y: 300 },
+            { type: 'water', emoji: '💧', x: 200, y: 400 },
+            { type: 'flower', emoji: '🌸', x: 600, y: 150 },
+            { type: 'tree', emoji: '🌳', x: 800, y: 250 },
+            { type: 'carrot', emoji: '🥕', x: 150, y: 350 },
+            { type: 'friend', emoji: '🐑', x: 700, y: 400 },
+            { type: 'bed', emoji: '🛏️', x: 100, y: 100 },
+            { type: 'coin', emoji: '🪙', x: 450, y: 180 },
+            { type: 'berry', emoji: '🫐', x: 550, y: 420 },
+            { type: 'mushroom', emoji: '🍄', x: 320, y: 380 },
+            { type: 'rock', emoji: '🪨', x: 680, y: 180 },
+            { type: 'butterfly', emoji: '🦋', x: 380, y: 120 },
+            { type: 'pond', emoji: '🌊', x: 750, y: 350 },
+            { type: 'wood', emoji: '🪵', x: 920, y: 180 },
+            { type: 'stone', emoji: '🪨', x: 1200, y: 300 },
+            { type: 'milk', emoji: '🥛', x: 800, y: 500 },
+            { type: 'honey', emoji: '🍯', x: 1100, y: 200 },
+            { type: 'crystal', emoji: '💎', x: 1300, y: 400 },
+            { type: 'herb', emoji: '🌿', x: 400, y: 600 },
+            // Mehr Ressourcen für größere Welt
+            ...generateRandomObjects(50)
+        ];
+
+        const craftingRecipes = {
+            'house': { 
+                materials: { wood: 10, stone: 5 }, 
+                emoji: '🏠', 
+                effect: 'Schutz vor Monstern' 
+            },
+            'fence': { 
+                materials: { wood: 3 }, 
+                emoji: '🚧', 
+                effect: 'Barriere' 
+            },
+            'garden': { 
+                materials: { flower: 5, water: 2 }, 
+                emoji: '🌺', 
+                effect: '+Glück über Zeit' 
+            },
+            'well': { 
+                materials: { stone: 8, wood: 3 }, 
+                emoji: '🪣', 
+                effect: 'Unendlich Wasser' 
+            },
+            'barn': { 
+                materials: { wood: 15, stone: 8 }, 
+                emoji: '🏚️', 
+                effect: 'Tierschutz' 
+            },
+            'tower': { 
+                materials: { stone: 20, crystal: 1 }, 
+                emoji: '🗼', 
+                effect: 'Monster-Abwehr' 
+            }
+        };
+
+        const ageStages = {
+            baby: { min: 0, max: 25, emoji: '🍼', name: 'Baby Lama', size: 30 },
+            teen: { min: 25, max: 60, emoji: '🎒', name: 'Teenager Lama', size: 40 },
+            adult: { min: 60, max: 90, emoji: '💪', name: 'Erwachsenes Lama', size: 50 },
+            elder: { min: 90, max: 100, emoji: '👴', name: 'Weises Lama', size: 45 }
+        };
+
+        function generateRandomObjects(count) {
+            const objects = [];
+            const types = ['grass', 'flower', 'rock', 'tree', 'berry', 'mushroom', 'wood', 'stone'];
+            const emojis = ['🌱', '🌸', '🪨', '🌳', '🫐', '🍄', '🪵', '⭐'];
+            
+            for (let i = 0; i < count; i++) {
+                const typeIndex = Math.floor(Math.random() * types.length);
+                objects.push({
+                    type: types[typeIndex],
+                    emoji: emojis[typeIndex],
+                    x: Math.random() * 3000,
+                    y: Math.random() * 3000
+                });
+            }
+            return objects;
+        }
+
+        const world = document.getElementById('world');
+        const lama = document.getElementById('lama');
+        let moveSpeed = 60;
+
+        function initializeWorld() {
+            // Weltgegenstände
+            worldObjects.forEach(obj => {
+                const element = document.createElement('div');
+                element.className = 'object';
+                element.innerHTML = obj.emoji;
+                element.style.left = obj.x + 'px';
+                element.style.top = obj.y + 'px';
+                element.onclick = () => interactWith(obj);
+                world.appendChild(element);
+            });
+
+            // Initial Quests
+            initializeQuests();
+        }
+
+        function initializeQuests() {
+            gameState.quests = [
+                { id: 1, text: "Sammle 3 Gras 🌱", target: { type: 'grass', amount: 3 }, completed: false },
+                { id: 2, text: "Trinke Wasser 💧", target: { type: 'water', amount: 1 }, completed: false },
+                { id: 3, text: "Erreiche Alter 25 um Teenager zu werden", target: { type: 'age', amount: 25 }, completed: false }
+            ];
+        }
+
+        function spawnMonster() {
+            if (gameState.timeOfDay !== 'night') return;
+            
+            const monster = {
+                x: Math.random() * 1000 + 500,
+                y: Math.random() * 1000 + 500,
+                health: 50,
+                id: Date.now()
+            };
+            
+            monsters.push(monster);
+            
+            const element = document.createElement('div');
+            element.className = 'monster';
+            element.innerHTML = '🐴';
+            element.style.left = monster.x + 'px';
+            element.style.top = monster.y + 'px';
+            element.id = 'monster-' + monster.id;
+            element.onclick = () => fightMonster(monster);
+            world.appendChild(element);
+        }
+
+        function fightMonster(monster) {
+            if (gameState.ageStage === 'baby') {
+                showMessage('Du bist zu jung zum Kämpfen! Verstecke dich! 😰');
+                takeDamage(20);
+                return;
+            }
+
+            const damage = Math.random() * 30 + 20;
+            monster.health -= damage;
+            
+            if (monster.health <= 0) {
+                // Monster besiegt
+                const monsterElement = document.getElementById('monster-' + monster.id);
+                if (monsterElement) {
+                    monsterElement.remove();
+                }
+                monsters = monsters.filter(m => m.id !== monster.id);
+                
+                gameState.monstersKilled++;
+                gameState.coins += 15;
+                gainXP(25);
+                showMessage(`Monster besiegt! +15 Coins +25 XP 🏆`);
+                
+                // Chance auf seltene Items
+                if (Math.random() < 0.3) {
+                    addToInventory('crystal');
+                    showMessage('Seltener Kristall gefunden! 💎');
+                }
+            } else {
+                showMessage(`Monster getroffen! ${Math.round(damage)} Schaden 💥`);
+                // Monster schlägt zurück
+                takeDamage(10);
+            }
+        }
+
+        function takeDamage(amount) {
+            gameState.health = Math.max(0, gameState.health - amount);
+            lama.classList.add('damage');
+            setTimeout(() => lama.classList.remove('damage'), 500);
+            
+            if (gameState.health <= 0) {
+                showMessage('Du bist gestorben! 💀 Das Spiel startet neu...');
+                setTimeout(() => location.reload(), 3000);
+            }
+        }
+
+        function moveUp() {
+            gameState.worldY += moveSpeed;
+            gameState.energy = Math.max(0, gameState.energy - 1);
+            updateWorld();
+            updateStats();
+            addBounceEffect();
+            checkMonsterProximity();
+        }
+
+        function moveDown() {
+            gameState.worldY -= moveSpeed;
+            gameState.energy = Math.max(0, gameState.energy - 1);
+            updateWorld();
+            updateStats();
+            addBounceEffect();
+            checkMonsterProximity();
+        }
+
+        function moveLeft() {
+            gameState.worldX += moveSpeed;
+            gameState.energy = Math.max(0, gameState.energy - 1);
+            updateWorld();
+            updateStats();
+            addBounceEffect();
+            checkMonsterProximity();
+        }
+
+        function moveRight() {
+            gameState.worldX -= moveSpeed;
+            gameState.energy = Math.max(0, gameState.energy - 1);
+            updateWorld();
+            updateStats();
+            addBounceEffect();
+            checkMonsterProximity();
+        }
+
+        function checkMonsterProximity() {
+            const attackBtn = document.getElementById('attackBtn');
+            let nearMonster = false;
+            
+            monsters.forEach(monster => {
+                const distance = Math.sqrt(
+                    Math.pow(monster.x + gameState.worldX - window.innerWidth/2, 2) + 
+                    Math.pow(monster.y + gameState.worldY - window.innerHeight/2, 2)
+                );
+                
+                if (distance < 100) {
+                    nearMonster = true;
+                }
+            });
+            
+            attackBtn.style.display = nearMonster ? 'inline-block' : 'none';
+        }
+
+        function attack() {
+            const nearbyMonster = monsters.find(monster => {
+                const distance = Math.sqrt(
+                    Math.pow(monster.x + gameState.worldX - window.innerWidth/2, 2) + 
+                    Math.pow(monster.y + gameState.worldY - window.innerHeight/2, 2)
+                );
+                return distance < 100;
+            });
+            
+            if (nearbyMonster) {
+                fightMonster(nearbyMonster);
+            }
+        }
+
+        function addBounceEffect() {
+            lama.classList.add('bounce');
+            setTimeout(() => lama.classList.remove('bounce'), 600);
+        }
+
+        function updateWorld() {
+            world.style.transform = `translate(${gameState.worldX}px, ${gameState.worldY}px)`;
+        }
+
+        function interactWith(obj) {
+            let message = '';
+            let gained = false;
+
+            // Verschiedene Interaktionen basierend auf Alter
+            switch(obj.type) {
+                case 'grass':
+                case 'apple':
+                case 'carrot':
+                case 'berry':
+                    gameState.hunger = Math.min(100, gameState.hunger + 20);
+                    message = 'Lecker! Hunger gestillt! 🍴';
+                    gainXP(gameState.ageStage === 'baby' ? 15 : 10);
+                    gained = true;
+                    break;
+                
+                case 'water':
+                case 'pond':
+                case 'milk':
+                    gameState.hunger = Math.min(100, gameState.hunger + 15);
+                    gameState.happiness = Math.min(100, gameState.happiness + 10);
+                    message = 'Erfrischend! 💦';
+                    gainXP(gameState.ageStage === 'baby' ? 12 : 8);
+                    gained = true;
+                    break;
+                
+                case 'flower':
+                case 'butterfly':
+                    gameState.happiness = Math.min(100, gameState.happiness + 25);
+                    message = 'Wie schön! Das macht glücklich! 🌈';
+                    gainXP(15);
+                    gained = true;
+                    break;
+                
+                case 'friend':
+                    if (gameState.ageStage !== 'baby') {
+                        gameState.happiness = Math.min(100, gameState.happiness + 30);
+                        message = 'Neuer Freund gefunden! 🤗';
+                        gainXP(20);
+                        gained = true;
+                    } else {
+                        message = 'Du bist noch zu schüchtern als Baby! 👶';
+                    }
+                    break;
+                
+                case 'bed':
+                    gameState.energy = Math.min(100, gameState.energy + 40);
+                    gameState.health = Math.min(100, gameState.health + 20);
+                    message = 'Gut geschlafen! 😴';
+                    gainXP(12);
+                    gained = true;
+                    break;
+                
+                case 'wood':
+                case 'stone':
+                case 'crystal':
+                    if (gameState.ageStage !== 'baby') {
+                        message = `${obj.type} gesammelt! Zum Bauen! 🔨`;
+                        gained = true;
+                        gainXP(8);
+                    } else {
+                        message = 'Du bist zu klein um das zu tragen! 👶';
+                    }
+                    break;
+                
+                default:
+                    message = `Du interagierst mit ${obj.emoji}`;
+                    gainXP(5);
+                    gained = true;
+            }
+
+            if (gained) {
+                addToInventory(obj.type);
+                updateQuests(obj.type);
+            }
+
+            showMessage(message);
+            updateStats();
+            updateInventory();
+        }
+
+        function updateQuests(itemType) {
+            gameState.quests.forEach(quest => {
+                if (!quest.completed && quest.target.type === itemType) {
+                    const currentAmount = gameState.inventory[itemType] || 0;
+                    if (currentAmount >= quest.target.amount) {
+                        quest.completed = true;
+                        gameState.coins += 25;
+                        gainXP(50);
+                        showMessage(`Quest abgeschlossen! +25 Coins +50 XP ⭐`);
+                        
+                        // Neue Quests hinzufügen
+                        addNewQuests();
+                    }
+                }
+            });
+            
+            // Alters-Quest prüfen
+            gameState.quests.forEach(quest => {
+                if (!quest.completed && quest.target.type === 'age' && gameState.age >= quest.target.amount) {
+                    quest.completed = true;
+                    gameState.coins += 50;
+                    gainXP(100);
+                    showMessage(`Alters-Meilenstein erreicht! +50 Coins +100 XP 🎉`);
+                }
+            });
+            
+            updateQuestDisplay();
+        }
+
+        function addNewQuests() {
+            const newQuests = [
+                { id: Date.now(), text: "Baue dein erstes Haus 🏠", target: { type: 'building', amount: 1 }, completed: false },
+                { id: Date.now() + 1, text: "Besiege 3 Monster 🐴", target: { type: 'monster', amount: 3 }, completed: false },
+                { id: Date.now() + 2, text: "Sammle 5 Kristalle 💎", target: { type: 'crystal', amount: 5 }, completed: false }
+            ];
+            
+            newQuests.forEach(quest => {
+                if (!gameState.quests.find(q => q.text === quest.text)) {
+                    gameState.quests.push(quest);
+                }
+            });
+        }
+
+        function toggleBuildMode() {
+            buildingMode = !buildingMode;
+            const btn = document.getElementById('buildBtn');
+            btn.style.background = buildingMode ? '#ff5722' : '#9c27b0';
+            btn.textContent = buildingMode ? '❌ Bauen Beenden' : '🏗️ Bauen';
+            
+            if (buildingMode) {
+                showMessage('Baumodus aktiviert! Klicke auf freie Flächen zum Bauen! 🏗️');
+            }
+        }
+
+        function buildStructure(x, y, type) {
+            const recipe = craftingRecipes[type];
+            if (!recipe) return false;
+            
+            // Prüfen ob genug Materialien vorhanden
+            for (let [material, needed] of Object.entries(recipe.materials)) {
+                if ((gameState.inventory[material] || 0) < needed) {
+                    showMessage(`Nicht genug ${material}! Benötigt: ${needed} ❌`);
+                    return false;
+                }
+            }
+            
+            // Materialien verbrauchen
+            for (let [material, needed] of Object.entries(recipe.materials)) {
+                gameState.inventory[material] -= needed;
+                if (gameState.inventory[material] <= 0) {
+                    delete gameState.inventory[material];
+                }
+            }
+            
+            // Gebäude erstellen
+            const building = {
+                type: type,
+                emoji: recipe.emoji,
+                x: x - gameState.worldX,
+                y: y - gameState.worldY,
+                id: Date.now()
+            };
+            
+            gameState.buildings.push(building);
+            
+            const element = document.createElement('div');
+            element.className = 'building';
+            element.innerHTML = recipe.emoji;
+            element.style.left = building.x + 'px';
+            element.style.top = building.y + 'px';
+            element.onclick = () => useBuilding(building);
+            world.appendChild(element);
+            
+            showMessage(`${type} gebaut! ${recipe.effect} ✅`);
+            gainXP(30);
+            updateInventory();
+            return true;
+        }
+
+        function useBuilding(building) {
+            switch(building.type) {
+                case 'house':
+                    gameState.energy = Math.min(100, gameState.energy + 50);
+                    gameState.health = Math.min(100, gameState.health + 30);
+                    gameState.happiness = Math.min(100, gameState.happiness + 20);
+                    showMessage('Zuhause! Sicherheit und Komfort! 🏠');
+                    break;
+                    
+                case 'well':
+                    gameState.hunger = Math.min(100, gameState.hunger + 25);
+                    showMessage('Frisches Wasser aus dem Brunnen! 🪣');
+                    break;
+                    
+                case 'garden':
+                    gameState.happiness = Math.min(100, gameState.happiness + 35);
+                    showMessage('Wunderschöner Garten! So entspannend! 🌺');
+                    break;
+                    
+                case 'barn':
+                    // Schützt Freunde/Tiere
+                    gameState.happiness = Math.min(100, gameState.happiness + 20);
+                    showMessage('Alle Tiere sind sicher im Stall! 🏚️');
+                    break;
+                    
+                case 'tower':
+                    // Monster-Abwehr
+                    monsters.forEach(monster => {
+                        const distance = Math.sqrt(
+                            Math.pow(monster.x - building.x, 2) + 
+                            Math.pow(monster.y - building.y, 2)
+                        );
+                        if (distance < 200) {
+                            const monsterElement = document.getElementById('monster-' + monster.id);
+                            if (monsterElement) {
+                                monsterElement.remove();
+                            }
+                        }
+                    });
+                    monsters = monsters.filter(monster => {
+                        const distance = Math.sqrt(
+                            Math.pow(monster.x - building.x, 2) + 
+                            Math.pow(monster.y - building.y, 2)
+                        );
+                        return distance >= 200;
+                    });
+                    showMessage('Turm vertreibt Monster in der Nähe! 🗼');
+                    break;
+            }
+            gainXP(10);
+        }
+
+        function addToInventory(item) {
+            if (gameState.inventory[item]) {
+                gameState.inventory[item]++;
+            } else {
+                gameState.inventory[item] = 1;
+            }
+        }
+
+        function gainXP(amount) {
+            gameState.xp += amount;
+            if (gameState.xp >= gameState.level * 100) {
+                gameState.xp = 0;
+                gameState.level++;
+                showMessage(`Level Up! Du bist jetzt Level ${gameState.level}! ⭐`);
+                gameState.coins += gameState.level * 15;
+            }
+        }
+
+        function updateAge() {
+            gameState.age += 0.5; // Altert langsam über Zeit
+            
+            const currentStage = gameState.ageStage;
+            let newStage = 'baby';
+            
+            if (gameState.age >= ageStages.elder.min) newStage = 'elder';
+            else if (gameState.age >= ageStages.adult.min) newStage = 'adult';
+            else if (gameState.age >= ageStages.teen.min) newStage = 'teen';
+            
+            if (newStage !== currentStage) {
+                gameState.ageStage = newStage;
+                lama.className = `lama ${newStage}`;
+                lama.style.fontSize = ageStages[newStage].size + 'px';
+                showMessage(`Du bist jetzt ein ${ageStages[newStage].name}! 🎉`);
+                
+                // Neue Fähigkeiten freischalten
+                if (newStage === 'teen') {
+                    showMessage('Du kannst jetzt bauen und mit anderen interagieren! 🔨');
+                } else if (newStage === 'adult') {
+                    showMessage('Du bist stark genug um gegen Monster zu kämpfen! ⚔️');
+                } else if (newStage === 'elder') {
+                    showMessage('Du bist weise geworden! Alle Aktionen geben mehr XP! 🧙');
+                }
+            }
+        }
+
+        function showMessage(text) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.style.opacity = '1';
+            setTimeout(() => {
+                messageEl.style.opacity = '0';
+            }, 3000);
+        }
+
+        function updateStats() {
+            document.getElementById('hungerBar').style.width = gameState.hunger + '%';
+            document.getElementById('hungerValue').textContent = Math.round(gameState.hunger);
+            
+            document.getElementById('happinessBar').style.width = gameState.happiness + '%';
+            document.getElementById('happinessValue').textContent = Math.round(gameState.happiness);
+            
+            document.getElementById('energyBar').style.width = gameState.energy + '%';
+            document.getElementById('energyValue').textContent = Math.round(gameState.energy);
+            
+            document.getElementById('healthBar').style.width = gameState.health + '%';
+            document.getElementById('healthValue').textContent = Math.round(gameState.health);
+            
+            document.getElementById('ageBar').style.width = (gameState.age % 100) + '%';
+            document.getElementById('ageValue').textContent = Math.round(gameState.age);
+            
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('xp').textContent = gameState.xp;
+            document.getElementById('coins').textContent = gameState.coins;
+            document.getElementById('dayCounter').textContent = gameState.day;
+            
+            // Altersanzeige
+            const ageIndicator = document.getElementById('ageIndicator');
+            const stage = ageStages[gameState.ageStage];
+            ageIndicator.innerHTML = `${stage.emoji} ${stage.name}`;
+        }
+
+        function updateInventory() {
+            const inventoryEl = document.getElementById('inventoryItems');
+            inventoryEl.innerHTML = '';
+            
+            for (let [item, count] of Object.entries(gameState.inventory)) {
+                const itemEl = document.createElement('div');
+                const emoji = worldObjects.find(obj => obj.type === item)?.emoji || '❓';
+                itemEl.innerHTML = `${emoji} x${count}`;
+                inventoryEl.appendChild(itemEl);
+            }
+        }
+
+        function updateCrafting() {
+            const craftingEl = document.getElementById('craftingRecipes');
+            craftingEl.innerHTML = '';
+            
+            if (gameState.ageStage === 'baby') {
+                craftingEl.innerHTML = '<p>Zu jung zum Bauen! 👶</p>';
+                return;
+            }
+            
+            for (let [recipe, data] of Object.entries(craftingRecipes)) {
+                const recipeEl = document.createElement('div');
+                recipeEl.className = 'craft-recipe';
+                
+                let canCraft = true;
+                let materialsText = '';
+                
+                for (let [material, needed] of Object.entries(data.materials)) {
+                    const have = gameState.inventory[material] || 0;
+                    const emoji = worldObjects.find(obj => obj.type === material)?.emoji || '❓';
+                    materialsText += `${emoji}${have}/${needed} `;
+                    if (have < needed) canCraft = false;
+                }
+                
+                recipeEl.innerHTML = `
+                    ${data.emoji} ${recipe}<br>
+                    ${materialsText}<br>
+                    <small>${data.effect}</small>
+                `;
+                
+                recipeEl.style.opacity = canCraft ? '1' : '0.5';
+                
+                if (canCraft) {
+                    recipeEl.onclick = () => {
+                        if (buildingMode) {
+                            showMessage(`Klicke auf die Karte um ${recipe} zu bauen! 🏗️`);
+                            currentBuildType = recipe;
+                        } else {
+                            showMessage('Aktiviere erst den Baumodus! 🔨');
+                        }
+                    };
+                }
+                
+                craftingEl.appendChild(recipeEl);
+            }
+        }
+
+        function updateQuestDisplay() {
+            const questEl = document.getElementById('questList');
+            questEl.innerHTML = '';
+            
+            gameState.quests.forEach(quest => {
+                const questItem = document.createElement('div');
+                questItem.style.marginBottom = '8px';
+                questItem.style.padding = '5px';
+                questItem.style.borderRadius = '5px';
+                questItem.style.backgroundColor = quest.completed ? '#c8e6c9' : '#fff3e0';
+                
+                questItem.innerHTML = `
+                    ${quest.completed ? '✅' : '⏳'} ${quest.text}
+                `;
+                
+                questEl.appendChild(questItem);
+            });
+        }
+
+        function updateTimeAndWeather() {
+            // Tag/Nacht-Zyklus
+            const timeDisplay = document.getElementById('timeDisplay');
+            const worldEl = document.getElementById('world');
+            
+            if (gameState.timeOfDay === 'day') {
+                gameState.timeOfDay = 'night';
+                timeDisplay.innerHTML = '🌙 Nacht';
+                worldEl.classList.add('night');
+                showMessage('Die Nacht bricht herein... Monster könnten auftauchen! 🌙');
+                
+                // Monster spawnen
+                setTimeout(() => spawnMonster(), 2000);
+                setTimeout(() => spawnMonster(), 5000);
+                if (Math.random() < 0.7) {
+                    setTimeout(() => spawnMonster(), 8000);
+                }
+                
+            } else {
+                gameState.timeOfDay = 'day';
+                gameState.day++;
+                timeDisplay.innerHTML = '🌅 Tag';
+                worldEl.classList.remove('night');
+                showMessage('Ein neuer Tag beginnt! 🌅');
+                
+                // Monster verschwinden
+                monsters.forEach(monster => {
+                    const element = document.getElementById('monster-' + monster.id);
+                    if (element) element.remove();
+                });
+                monsters = [];
+            }
+            
+            // Wetter wechseln
+            const weathers = [
+                { name: 'Sonnig', emoji: '☀️' },
+                { name: 'Regnerisch', emoji: '🌧️' },
+                { name: 'Bewölkt', emoji: '☁️' },
+                { name: 'Windig', emoji: '💨' },
+                { name: 'Schnee', emoji: '❄️' }
+            ];
+            
+            const weather = weathers[Math.floor(Math.random() * weathers.length)];
+            document.getElementById('weatherDisplay').textContent = `${weather.emoji} ${weather.name}`;
+            gameState.weather = weather.name.toLowerCase();
+        }
+
+        function gameLoop() {
+            // Stat-Verlust über Zeit (langsamer für Babies)
+            const ageMultiplier = gameState.ageStage === 'baby' ? 0.5 : 1;
+            
+            gameState.hunger = Math.max(0, gameState.hunger - (0.3 * ageMultiplier));
+            gameState.happiness = Math.max(0, gameState.happiness - (0.2 * ageMultiplier));
+            gameState.energy = Math.max(0, gameState.energy - (0.15 * ageMultiplier));
+            
+            // Altern
+            updateAge();
+            
+            updateStats();
+            
+            // Warnungen
+            if (gameState.hunger < 20) {
+                showMessage('Dein Lama ist hungrig! Finde etwas zu essen! 🍎');
+            } else if (gameState.energy < 20) {
+                showMessage('Dein Lama ist müde! Ruhe dich aus! 🛏️');
+            } else if (gameState.happiness < 20) {
+                showMessage('Dein Lama ist traurig! Finde etwas Schönes! 🌸');
+            } else if (gameState.health < 30 && gameState.timeOfDay === 'night') {
+                showMessage('Gefährlich niedrige Gesundheit bei Nacht! Verstecke dich! ⚠️');
+            }
+            
+            // Passive Heilung bei hoher Gesundheit
+            if (gameState.happiness > 80 && gameState.energy > 80) {
+                gameState.health = Math.min(100, gameState.health + 1);
+            }
+        }
+
+        let currentBuildType = null;
+
+        // Klick-Event für Bauen
+        world.addEventListener('click', function(e) {
+            if (buildingMode && currentBuildType) {
+                const rect = world.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (buildStructure(x, y, currentBuildType)) {
+                    currentBuildType = null;
+                    buildingMode = false;
+                    document.getElementById('buildBtn').style.background = '#9c27b0';
+                    document.getElementById('buildBtn').textContent = '🏗️ Bauen';
+                }
+            }
+        });
+
+        function saveGame() {
+            const saveData = JSON.stringify(gameState, null, 2);
+            document.cookie = `lamaGame=${encodeURIComponent(saveData)}; expires=${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString()}; path=/`;
+            showMessage('Spiel gespeichert! 💾');
+        }
+
+        function loadGame() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'lamaGame') {
+                    try {
+                        gameState = JSON.parse(decodeURIComponent(value));
+                        
+                        // Gebäude wiederherstellen
+                        gameState.buildings.forEach(building => {
+                            const element = document.createElement('div');
+                            element.className = 'building';
+                            element.innerHTML = building.emoji;
+                            element.style.left = building.x + 'px';
+                            element.style.top = building.y + 'px';
+                            element.onclick = () => useBuilding(building);
+                            world.appendChild(element);
+                        });
+                        
+                        // Lama-Aussehen aktualisieren
+                        lama.className = `lama ${gameState.ageStage}`;
+                        lama.style.fontSize = ageStages[gameState.ageStage].size + 'px';
+                        
+                        updateStats();
+                        updateInventory();
+                        updateCrafting();
+                        updateQuestDisplay();
+                        updateWorld();
+                        showMessage('Spiel geladen! 📁');
+                        return;
+                    } catch (e) {
+                        showMessage('Fehler beim Laden! ❌');
+                        return;
+                    }
+                }
+            }
+            showMessage('Kein Spielstand gefunden! ⚠️');
+        }
+
+        function downloadSave() {
+            const saveData = JSON.stringify(gameState, null, 2);
+            const blob = new Blob([saveData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lama-survival-tag${gameState.day}-${gameState.ageStage}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showMessage('Spielstand heruntergeladen! 📥');
+        }
+
+        function uploadSave(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        gameState = JSON.parse(e.target.result);
+                        
+                        // Welt neu aufbauen
+                        const buildings = world.querySelectorAll('.building');
+                        buildings.forEach(b => b.remove());
+                        
+                        gameState.buildings.forEach(building => {
+                            const element = document.createElement('div');
+                            element.className = 'building';
+                            element.innerHTML = building.emoji;
+                            element.style.left = building.x + 'px';
+                            element.style.top = building.y + 'px';
+                            element.onclick = () => useBuilding(building);
+                            world.appendChild(element);
+                        });
+                        
+                        lama.className = `lama ${gameState.ageStage}`;
+                        lama.style.fontSize = ageStages[gameState.ageStage].size + 'px';
+                        
+                        updateStats();
+                        updateInventory();
+                        updateCrafting();
+                        updateQuestDisplay();
+                        updateWorld();
+                        showMessage('Spielstand hochgeladen! 📤');
+                    } catch (error) {
+                        showMessage('Ungültige Datei! ❌');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    moveUp();
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    moveDown();
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    moveLeft();
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    moveRight();
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    attack();
+                    break;
+            }
+        });
+
+        // Initialize game
+        initializeWorld();
+        updateStats();
+        updateInventory();
+        updateCrafting();
+        updateQuestDisplay();
+        updateTimeAndWeather();
+        
+        // Willkommensnachricht
+        showMessage('🍼 Du bist als Baby-Lama geboren! Erkunde die Welt und wachse heran! 🌟');
+        
+        // Start game loop
+        setInterval(gameLoop, 8000); // Stats alle 8 Sekunden
+        setInterval(updateTimeAndWeather, 45000); // Tag/Nacht alle 45 Sekunden
+        setInterval(updateCrafting, 3000); // Crafting-Anzeige aktualisieren
+    </script>
+</body>
+</html>
