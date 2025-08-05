@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bewegliches Fenster (IE7 Experiment)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the background and font */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent body scrolling when dragging */
+            background-image: url('data:image/jpeg;base64,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08FwyssFtZzLOkjz/K5OXp9+cUadYx9u6M8/FSRXBgkZDLj+VS4TGNeLHp9/JT/AJluvdpePFceWGvAmNjLgbHvg9beizq6A20kcvNQRVnwtz9z5rYXzaRaTEm8QqXAWWHO7bIXI6GF69kwfHlBn8KF8yCMyCNcxeCPVSadQdJPQG49VSyibQrbvDTusePgsMPVO9PERB5XH2Ub5nZubjX3mPwlSpPEX08LdVGqlPxTt6D4EakX05T4o+r3kCCD771XU6pG8NMs/PkvW1DA4ZdNOt/JNUb2N7VuGeepPTisxU7Md/dMx0UQVgLcLeNvZWD6+YnMeRTtEvEVYvGlsx06/VQKz93LhBk68Fqq4kzwhVmP2mynnefFaY8dt1BLr4sNaST1XM7U2waktbZvmVEx+OdVMmw0HBRV6PD08x832CIi6QREQEREBERAREQEREBERBk1xFwYU7D7We3O481Xoq3GX2Oiw212HXdPNT24tpEAgzzGl/Nccixy6fG+kad2K8xflM8cj5Lb8wGOPDun31XCsxLxk4+K3M2nVH7lnelvxTTr6b4gTecvBbjiI95yBK4//WKnLwT/AFmpEW8x6Kl6XI0675t+RXpxGeo/Hrl4LkP9YqZWWp+0qh/dHcpnS5GnXVqwBz162yUPEbXY209Fy1TEvObj6ei1LTHpZ800uMVtsusAQOOvQKoc4m5uvEXRjhMfSRERWBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQCiIgL0LxEBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQf/2Q==');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Styles for the draggable window */
+        .draggable-window {
+            position: absolute;
+            width: 300px;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            border: 2px solid #333;
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the window initially */
+            z-index: 1000; /* Ensure it's on top */
+            user-select: none; /* Prevent text selection during drag */
+        }
+
+        .draggable-window-header {
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            cursor: grab; /* Cursor for header too */
+        }
+
+        .window-content {
+            flex-grow: 1; /* Allow content to take available space */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .fun-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 5px; /* Add some margin between buttons */
+        }
+
+        .fun-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .fun-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .warning-message {
+            background-color: #ffdddd;
+            color: #d8000c;
+            border: 1px solid #d8000c;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div class="warning-message">
+        WARNUNG: Diese Seite verwendet Funktionen, die in modernen Browsern aus Sicherheitsgründen deaktiviert sind. Sie ist nur für Experimente in sehr alten Browsern wie IE 7 gedacht.
+    </div>
+
+    <div id="draggableWindow" class="draggable-window">
+        <div class="draggable-window-header">
+            Ziehe mich herum!
+        </div>
+        <div id="windowMessage" class="window-content">
+            Hallo! Ich bin ein bewegliches Fenster.
+        </div>
+        <div class="button-container">
+            <button id="changeMessageBtn" class="fun-button">
+                Klick mich für eine neue Nachricht!
+            </button>
+            <button id="startAutoMoveBtn" class="fun-button bg-blue-500 hover:bg-blue-600">
+                Start Bewegung
+            </button>
+            <button id="stopAutoMoveBtn" class="fun-button bg-red-500 hover:bg-red-600">
+                Stop Bewegung
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- IE 7 Spezifische Experimente (Nicht für moderne Browser empfohlen!) ---
+        window.onload = function() {
+            try {
+                // Versucht, das Haupt-Browserfenster zu bewegen
+                // Dies wird in modernen Browsern NICHT funktionieren!
+                window.moveTo(100, 100);
+                // Versucht, die Größe des Haupt-Browserfensters zu ändern
+                // Dies wird in modernen Browsern NICHT funktionieren!
+                window.resizeTo(800, 600);
+            } catch (e) {
+                console.log("Fensterbewegung/Größenänderung fehlgeschlagen (erwartet in modernen Browsern):", e);
+            }
+
+            // Initial centering of the draggable div on load
+            const draggableWindow = document.getElementById('draggableWindow');
+            const centerX = (window.innerWidth - draggableWindow.offsetWidth) / 2;
+            const centerY = (window.innerHeight - draggableWindow.offsetHeight) / 2;
+            draggableWindow.style.left = `${centerX}px`;
+            draggableWindow.style.top = `${centerY}px`;
+
+            // Start automatic movement of the div when the page loads
+            startAutoMovement();
+        };
+        // --- Ende IE 7 Spezifische Experimente ---
+
+
+        const draggableWindow = document.getElementById('draggableWindow');
+        const windowMessage = document.getElementById('windowMessage');
+        const changeMessageBtn = document.getElementById('changeMessageBtn');
+        const startAutoMoveBtn = document.getElementById('startAutoMoveBtn');
+        const stopAutoMoveBtn = document.getElementById('stopAutoMoveBtn');
+
+        let isDragging = false;
+        let offsetX, offsetY;
+        let autoMoveInterval; // Variable to store the interval ID for auto-movement
+        let moveDirectionX = 1; // 1 for right, -1 for left
+        let moveDirectionY = 1; // 1 for down, -1 for up
+        const moveSpeed = 3; // Pixels per interval
+
+        // Messages for the button
+        const messages = [
+            "Super, dass du mich gefunden hast!",
+            "Ich liebe es, herumgeschoben zu werden!",
+            "Wusstest du, dass du mich überall hinziehen kannst?",
+            "Ich bin ein Fenster mit Persönlichkeit!",
+            "Was gibt's Neues?",
+            "Lass uns Spaß haben!",
+            "Du bist ein großartiger Fenster-Zieher!",
+            "Noch eine Runde?"
+        ];
+        let currentMessageIndex = 0;
+
+        // Function to change the message
+        function changeWindowMessage() {
+            currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            windowMessage.textContent = messages[currentMessageIndex];
+        }
+
+        // Function to start automatic movement
+        function startAutoMovement() {
+            // Clear any existing interval to prevent multiple movements
+            if (autoMoveInterval) clearInterval(autoMoveInterval);
+
+            autoMoveInterval = setInterval(() => {
+                let currentX = draggableWindow.offsetLeft;
+                let currentY = draggableWindow.offsetTop;
+
+                let newX = currentX + (moveSpeed * moveDirectionX);
+                let newY = currentY + (moveSpeed * moveDirectionY);
+
+                // Check boundaries and reverse direction if needed
+                if (newX + draggableWindow.offsetWidth > window.innerWidth || newX < 0) {
+                    moveDirectionX *= -1; // Reverse X direction
+                    newX = currentX + (moveSpeed * moveDirectionX); // Apply new direction immediately
+                }
+                if (newY + draggableWindow.offsetHeight > window.innerHeight || newY < 0) {
+                    moveDirectionY *= -1; // Reverse Y direction
+                    newY = currentY + (moveSpeed * moveDirectionY); // Apply new direction immediately
+                }
+
+                draggableWindow.style.left = `${newX}px`;
+                draggableWindow.style.top = `${newY}px`;
+            }, 20); // Move every 20 milliseconds
+        }
+
+        // Function to stop automatic movement
+        function stopAutoMovement() {
+            clearInterval(autoMoveInterval);
+            autoMoveInterval = null; // Reset the interval ID
+        }
+
+        // Event listeners for dragging
+        draggableWindow.addEventListener('mousedown', (e) => {
+            // Only start dragging if not currently in auto-move mode
+            if (!autoMoveInterval) {
+                isDragging = true;
+                // Calculate offset relative to the window's top-left corner
+                offsetX = e.clientX - draggableWindow.getBoundingClientRect().left;
+                offsetY = e.clientY - draggableWindow.getBoundingClientRect().top;
+                draggableWindow.style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            // Update window position based on mouse movement and initial offset
+            let newX = e.clientX - offsetX;
+            let newY = e.clientY - offsetY;
+
+            // Boundary checks to keep the window within the viewport
+            newX = Math.max(0, Math.min(newX, window.innerWidth - draggableWindow.offsetWidth));
+            newY = Math.max(0, Math.min(newY, window.innerHeight - draggableWindow.offsetHeight));
+
+            draggableWindow.style.left = `${newX}px`;
+            draggableWindow.style.top = `${newY}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            if (!autoMoveInterval) { // Only reset cursor if not auto-moving
+                draggableWindow.style.cursor = 'grab';
+            }
+        });
+
+        // Event listener for the buttons
+        changeMessageBtn.addEventListener('click', changeWindowMessage);
+        startAutoMoveBtn.addEventListener('click', startAutoMovement);
+        stopAutoMoveBtn.addEventListener('click', stopAutoMovement);
+
+        // Recenter on window resize
+        window.addEventListener('resize', () => {
+            // Stop auto-movement if window is resized, to prevent unexpected behavior
+            stopAutoMovement();
+            const centerX = (window.innerWidth - draggableWindow.offsetWidth) / 2;
+            const centerY = (window.innerHeight - draggableWindow.offsetHeight) / 2;
+            draggableWindow.style.left = `${centerX}px`;
+            draggableWindow.style.top = `${centerY}px`;
+        });
+
+    </script>
+</body>
+</html>
