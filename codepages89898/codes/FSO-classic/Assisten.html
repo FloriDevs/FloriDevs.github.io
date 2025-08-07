@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nat Nat Nat Nat</title>
+</head>
+<body>
+
+
+    <h1>Wellcome to you .HTML Assistent</h1>
+    <h4>A digital Assistent in HTML and Java Script</h4>
+    <h6>Do a right-click on this page to open my menu</h6>
+    <img id="bild" src="earth.png" alt="tux" width="1200">
+</body>
+</html>
+<script>
+    
+    const bild = document.getElementById('bild');
+    const bild1 = 'earth.png'
+    const bild2 = 'earth2.png'
+    const bild3 = 'earth3.png'
+    const bild4 = 'earth4.png'
+    function wechselBild() {
+            bild.src = bild1; // Bild wechseln zu bild2
+            setTimeout(() => {
+                bild.src = bild2; // Nach 3 Sekunden zurück zu bild1
+            }, 2000);
+        }
+
+        // Starte die Endlosschleife
+        setInterval(wechselBild, 2600); // Alle 6 Sekunden Bildwechsel
+    </script>
+
+
+
+
+
+
+<style>
+    
+    #customContextMenu {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        z-index: 1000;
+    }
+    #customContextMenu li {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+    #customContextMenu li:hover {
+        background-color: #f0f0f0;
+    }
+</style>
+</head>
+<body>
+
+<ul id="customContextMenu">
+<li onclick="one()">Tell me a joke</li>
+<li onclick="two()">Open a music stremeing service (YT Music)</li>
+<li onclick="three()">Search for the web</li>
+<li onclick="four()">Tell me an ammazing fakt ?</li>
+<li onclick="six()">What's the wether like today ?</li>
+<li onclick="seven()">Random number from 1 Until 6</li>
+<li onclick="eight()">What time is it ?</li>
+</ul>
+
+<script>
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); // Deaktiviert das Standard-Kontextmenü
+    var menu = document.getElementById('customContextMenu');
+    menu.style.display = 'block';
+    menu.style.left = e.pageX + 'px';
+    menu.style.top = e.pageY + 'px';
+});
+document.addEventListener('click', function() {
+    var menu = document.getElementById('customContextMenu');
+    menu.style.display = 'none'; // Menü ausblenden bei Klick
+});
+function one(){
+    var ow = prompt ('What do you call fake spaghetti? ?')
+    alert ('An impasta!')
+    
+}
+function two(){
+    window.open ('https://music.youtube.com/')
+}
+function three(){
+    bild.scr = bild4
+ 
+
+    
+
+    var sea = prompt ('What do y}ou want to search for ?')
+    window.open ('https://www.google.com/search?q=' + sea)
+}
+function four(){
+    alert ('I think this on is interesting :-D')
+    alert ('An oak tree produces about 10 million acorns during its lifetime')
+}
+
+
+function six(){
+    alert ('Look out of your window')
+}
+
+function seven(){
+    alert (cube())
+}
+
+function cube() {
+    return Math.floor(Math.random() * 6) + 1;
+}
+function eight(){
+    alert ('Look at your clock !')
+
+}
+</script>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flori-Soft-open</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; 
+            justify-content: flex-start;
+        }
+        .footer {
+            background-color: black;
+            padding: 10px;
+            color: darkgrey;
+        }
+        body {
+            background-image: url('background.jpeg'); 
+        }
+        #cookiePopup {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: none;
+        }
+        
+        /* Modal styles */
+        #projectModal {
+            display: none; /* Hidden by default */
+            position: fixed; 
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+        }
+
+        #modalContent {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        #closeModal {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-family: sans-serif;
+        }
+
+        #closeModal:hover,
+        #closeModal:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="footer">
+        <b><h2><i><u>Welcome</u></i></h2></b>
+        <a href="https://mastodon.social/@ComputerEcke"><h3 style="color: aqua;">My Social Media</h3></a>
+        <a href="https://flori-soft-open.github.io/download.html"><h3 style="color: aqua;">My Download Page</h3></a>
+        
+        <button onclick="openModal()">See all my projects</button>
+        <label for="meinTextfeld">Search in the internet:</label>
+        <input type="text" id="meinTextfeld" name="meinTextfeld">
+        <button type="button" onclick="search()">Search</button>
+    </div>
+
+    <div class="container">
+        <div id="cookiePopup">
+            <p>This Webpage uses Cookies to save settings</p>
+            <button onclick="acceptCookies()">I am agree</button>
+            <button onclick="closePopup()">I am not agree</button>
+        </div>
+
+        <select id="searchEngine" onchange="saveSelection()">
+            <option value="">Choose your search engine</option>
+            <option value="Google">Google</option>
+            <option value="Bing">Bing</option>
+            <option value="Ecosia">Ecosia</option>
+        </select>
+    </div>
+
+    <!-- Modal for showing projects -->
+    <div id="projectModal">
+        <div id="modalContent">
+            <span id="closeModal">&times;</span>
+            <h2>My Projects</h2>
+            <a href="https://flori-soft-open.github.io/texteditor.html">My Text Editor</a>
+            <a href="https://flori-soft-open.github.io/webdesktop.html">My Web Desktop (claud computing)</a>
+            <a href="https://flori-soft-open.github.io/Assisten.html">My Web Assistent</a>
+ 
+        </div>
+    </div>
+
+    <script>
+        // Function to open the modal
+        function openModal() {
+            document.getElementById("projectModal").style.display = "block";
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("projectModal").style.display = "none";
+        }
+
+        // Close the modal when the user clicks on <span> (x)
+        document.getElementById("closeModal").onclick = function() {
+            closeModal();
+        }
+
+        // Cookies verwalten
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        // Suchfunktion
+        function search() {
+            const searchQuery = document.getElementById("meinTextfeld").value;
+            const searchEngine = getCookie("preferredSearchEngine") || "Google"; // Standard ist Google, falls keine Auswahl getroffen wurde
+            let searchURL = "";
+
+            switch (searchEngine) {
+                case "Google":
+                    searchURL = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+                    break;
+                case "Bing":
+                    searchURL = `https://www.bing.com/search?q=${encodeURIComponent(searchQuery)}`;
+                    break;
+                case "Ecosia":
+                    searchURL = `https://www.ecosia.org/search?q=${encodeURIComponent(searchQuery)}`;
+                    break;
+                default:
+                    searchURL = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+            }
+
+            window.open(searchURL, "_blank");
+        }
+
+        // Cookie auslesen
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function acceptCookies() {
+            setCookie("cookiesAccepted", "true", 30); // Cookie für 30 Tage setzen
+            document.getElementById("cookiePopup").style.display = "none"; // Popup schließen
+        }
+
+        function closePopup() {
+            document.getElementById("cookiePopup").style.display = "none"; // Popup schließen, wenn der Benutzer nicht zustimmt
+        }
+
+        function saveSelection() {
+            const selectedEngine = document.getElementById("searchEngine").value;
+            setCookie("preferredSearchEngine", selectedEngine, 30); // Cookie für 30 Tage setzen
+            console.log(`Selected search engine: ${selectedEngine}`); // Ausgabe der Auswahl in der Konsole
+        }
+
+        // Popup anzeigen, wenn Cookies noch nicht akzeptiert wurden
+        window.onload = function() {
+            if (!getCookie("cookiesAccepted")) {
+                document.getElementById("cookiePopup").style.display = "block";
+            }
+        };
+    </script>
+</body>
+</html>

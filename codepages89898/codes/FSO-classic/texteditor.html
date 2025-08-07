@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flori-Soft-open Text Editor Web</title>
+    
+</head>
+<body>
+
+<div id="menu">
+    <button onclick="openFile()">Open</button>
+    <button onclick="saveFile()">Save</button>
+    <button onclick="showAbout()">About</button>
+    <button onclick="exitApp()">Exit</button>
+</div>
+
+<textarea id="editor" placeholder="Start typing..."></textarea>
+
+<div id="aboutModal" style="display:none; background: rgba(0,0,0,0.8); color: white; padding: 20px; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); width: 80%; max-width: 400px; border-radius: 10px; text-align: center;">
+    <h2>About FloriSoft</h2>
+    <p>FloriSoft 2024 Sweet Pro open</p>
+    <p>Version Web 1.0</p>
+    <p>Made in Java</p>
+    <img src="icon.png" alt="Icon" style="max-width: 100px;">
+    <br><br>
+    <button onclick="closeAbout()">Close</button>
+</div>
+
+<script>
+    // Open file function
+    function openFile() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.fst,.txt,.bat';
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('editor').value = e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        };
+        input.click();
+    }
+
+    // Save file function
+    function saveFile() {
+    var filename = prompt("Type the filename");
+    const text = document.getElementById('editor').value;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename + '.fst';  // Default filename with .fst extension
+    link.click();
+}
+
+    // Show about information
+    function showAbout() {
+        document.getElementById('aboutModal').style.display = 'block';
+    }
+
+    // Close about modal
+    function closeAbout() {
+        document.getElementById('aboutModal').style.display = 'none';
+    }
+
+    // Exit function (only closes the tab for the web app)
+    function exitApp() {
+        if (confirm("Do you realy want to close ?")) {
+            window.close();
+        }
+    }
+</script>
+
+</body>
+</html>

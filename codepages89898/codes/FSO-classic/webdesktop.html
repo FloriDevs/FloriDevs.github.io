@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+            .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Höhe des Containers auf 100% des Viewports setzen */
+            justify-content: space-between; /* Platz zwischen Elementen verteilen */
+            }
+        .footer {
+            /* Das Element, das nach unten verschoben werden soll */
+            
+            background-color: darkslategray;
+            padding: 10px;
+            color: darkgrey;
+        }
+        body{
+            background-image: url('https://github.com/Flori-Soft-open/Flori-Soft-open.github.io/blob/main/background.jpeg?raw=true'); 
+            
+        }
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doors 8.6</title>
+</head>
+<body>
+   <div id="WikiSt" class="container">
+    <div class="footer">
+        <button id="Start">🚪 Menu</button>
+        <button onclick="search()">🔎</button>
+        <input type="text" id="search" placeholder="Im Web suchen">
+        <button onclick="Wiki() ">Wikipedia</button>
+        <button onclick="Text()" >✏️Texteditor</button>
+        <button onclick="Files()">📁Files (Google Drive)</button>
+        <button onclick="Docs()">✏️Docs</button>
+        <button onclick="Sheets()">Sheets</button>
+        <button onclick="Slides()">🧑🏽‍🏫Presentationen</button>
+        <audio id="myAudio" src="start.mp3"></audio>
+
+
+
+        </div>
+        
+
+        
+    </div>
+
+   </div>
+   
+
+    <script allow="autoplay">
+
+
+        function text(){
+                    window.open("https://flori-soft-open.github.io/texteditor.html", "Editor", "width=600,height=400");
+        }
+        var Name = prompt ("Type in your name")
+        alert ('Wellkome ' + Name )
+        playAudio()
+        document.addEventListener('keydown', function(event) {
+    if (event.key === '^') {
+        window.history.back();
+    }
+});
+
+
+
+        function Wiki() {
+            window.open("https://www.wikipedia.org", "Pop-up Fenster", "width=600,height=400");
+        }
+  
+        function Browser(){
+            window.open('https://www.ecosia.de', 'Ecosia', "width=600,height=400");
+        }"width=600,height=400"
+        function Files(){
+            window.open("https://drive.google.com/drive/home?ths=true", 'Files', "width=600,height=400")
+        }
+        function Docs(){
+            window.open("https://docs.google.com/document/u/0/", 'Docs', "width=600,height=400")
+        }
+        function Sheets(){
+            window.open("https://docs.google.com/spreadsheets/u/0/", 'Sheets', "width=600,height=400")
+        }
+        function Slides(){
+            window.open("https://docs.google.com/presentation/u/0/", 'Slides', "width=600,height=400")
+        }
+        function search(){
+            var YS = document.getElementById("search").value;
+            
+            window.open ('https://www.ecosia.org/search?method=index&q=' + YS, 'Suche', "width=600,height=400")
+        }
+        function ver(){
+            console.log ('doors 8.6.0.0.0.0')
+
+        }
+        function comand(){
+            var c = prompt ('Your command ;-)')
+            c()
+
+
+        }
+        function launch(){
+            window.open ('doorpad.html', "Pop-up Fenster", "width=600,height=400")
+        }
+
+        function playAudio() {
+    var audio = document.getElementById("myAudio");
+    audio.play();
+    audio.muted = false; 
+}
+
+
+    </script>
+    
+
+    
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+    
+    #customContextMenu {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        z-index: 1000;
+    }
+    #customContextMenu li {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+    #customContextMenu li:hover {
+        background-color: #f0f0f0;
+    }
+</style>
+</head>
+<body>
+
+<ul id="customContextMenu">
+<li onclick="one()">Betriebsystem-Hilfe</li>
+<li id="myBtn">Menü öffnen</li>
+
+</ul>
+
+<script>
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); // Deaktiviert das Standard-Kontextmenü
+    var menu = document.getElementById('customContextMenu');
+    menu.style.display = 'block';
+    menu.style.left = e.pageX + 'px';
+    menu.style.top = e.pageY + 'px';
+});
+function one() {
+    alert ('Willkommen bei der Doors-Hilfe ')
+    alert ('Hier findest du Hilfe zu vielen Probleme')
+    alert ('Betriebsystem: Programme beenden drücke ALT + F4 um Apps zu schliesen :-)')
+    alert ('Betriebsystem: Um dir alle Programme anzuzeigen klicke auf die Tür oben')
+    alert ('Support: Email an computerecke12@gmail.com ')
+    alert ('Claud: Google drive ist oben als Datei Maneger')
+
+}
+
+document.addEventListener('click', function() {
+    var menu = document.getElementById('customContextMenu');
+    menu.style.display = 'none'; // Menü ausblenden bei Klick
+});
+</script>
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <style>
+        /* Der Hintergrund des Modals */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+        }
+
+        /* Modal-Inhalt */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+
+        /* Schließen-Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+<!-- Das Modal -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h1>Dieses System ist OpenSource:</h1>
+        <h6>Doors bassiert auf BSD</h6>
+        <h6>der Desktop heißt HTML-Vally und wurde mit HTML geschrieben</h6>
+        <h6>das Betriebsystem nutzt ausserdem XORG und ein großer Teil ist auch Mozzila Firefox</h6>
+        <img src="https://www.freebsd.org/images/beastie.png" alt="BSD">
+    </div>
+</div>
+
+<script>
+    // Holen Sie sich das Modal
+    var modal = document.getElementById("myModal");
+    
+    // Holen Sie sich den Button, der das Modal öffnet
+    var btn = document.getElementById("myBtn");
+    
+    // Holen Sie sich das Element <span>, das das Modal schließt
+    var span = document.getElementsByClassName("close")[0];
+
+    // Wenn der Benutzer auf den Button klickt, öffnet sich das Modal
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    // Wenn der Benutzer auf <span> (x) klickt, schließt sich das Modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Wenn der Benutzer irgendwo außerhalb des Modals klickt, schließt es sich
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+<body id="doorpad">
+
+
+
+
+
+    <!-- Das Modal -->
+    <div id="myModal2" class="modal">
+        <div class="modal-content">
+            
+            <body >
+                <h1><h1><h1><h1><b><i><u><i><h1>Alle Apps:</h1></i></u></i></b></h1></h1></h1></h1>
+            <h4>A:</h4>
+            <button onclick="ams()"><img src="https://tse3.mm.bing.net/th?id=OIP.5_N04Z3sepgT1I2rnRsSyAHaD5&pid=Api" alt="amazon "><h5>amazon</h5></button>
+            <script>
+                function ams(){
+                    window.open ('https://www.amazon.com/')
+                }
+            </script>
+            <h4>G:</h4>
+            <button onclick="Google()"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWJpwUvZMFKp_kXyJA2yd8zulrzNfK4ZIOgQ&s" alt="google "><h5>Google</h5></button>      <button onclick="Docs()"><img src="https://tse3.mm.bing.net/th?id=OIP.634kr1XxXVnJZvn1f-YUowHaCy&pid=Api" alt="google docs" height="150"><h5>Google Docs</h5></button> <button onclick="Files()"><img src="https://tse1.mm.bing.net/th?id=OIP.9KGPBohrCCkWCr0BnphH7QHaFj&pid=Api" alt="Drive"  height="150"><h4>Dateien (Google Drive)</h4></button>
+            <script>
+                function Google(){
+                    window.open('https://www.google.com/', "Pop-up Fenster", "width=600,height=400")
+                }
+                function Docs(){
+                    window.open('https://docs.google.com/', "Pop-up Fenster", "width=600,height=400")
+                }
+                function Files(){
+                    window.open('https://drive.google.com/drive/home?ths=true', "Pop-up Fenster", "width=600,height=400")
+                }
+                function Maston(){
+                    window.open('https://mastodon.social/', "Pop-up Fenster", "width=600,height=400")
+                }
+                function YT(){
+                    window.open('https://youtube.com/' , "Pop-up Fenster", "width=600,height=400")
+                }
+            
+            
+            
+            </script>
+            <h4>Social Media:</h4>
+            <button onclick="Maston()"><img src="https://files.mastodon.social/accounts/avatars/000/013/179/original/b4ceb19c9c54ec7e.png" alt="Mastodon "><h5>Mastodon</h5></button>  
+            <button onclick="YT()"><img src="https://tse4.mm.bing.net/th?id=OIP.xxNZm92rz6ZHHChoF2zZSAHaBp&pid=Api" alt="yt"> <h4>YouTube</h4></button>
+            </body>
+
+        </div>
+    </div>
+    
+    <script>
+        // Holen Sie sich das Modal
+        var modal = document.getElementById("myModal2");
+        
+        // Holen Sie sich den Button, der das Modal öffnet
+        var btn = document.getElementById("Start");
+        
+        // Holen Sie sich das Element <span>, das das Modal schließt
+        var span = document.getElementsByClassName("close")[0];
+    
+        // Wenn der Benutzer auf den Button klickt, öffnet sich das Modal
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+    
+        // Wenn der Benutzer auf <span> (x) klickt, schließt sich das Modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    
+        // Wenn der Benutzer irgendwo außerhalb des Modals klickt, schließt es sich
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    
+    </body>
+    </html>
+    
+    
+    
+    
+    
+    
+    
