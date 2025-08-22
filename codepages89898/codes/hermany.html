@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Offline Sprachassistent</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    button {
+      background: #2b2b2b;
+      border: none;
+      padding: 20px;
+      border-radius: 50%;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0px 0px 10px #000;
+    }
+    button:hover {
+      background: #3b3b3b;
+    }
+    #response {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      text-align: center;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="startListening()">🎙️</button>
+  <div id="response"></div>
+
+  <script>
+    const synth = window.speechSynthesis;
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'de-DE';
+      synth.speak(utterance);
+    }
+
+    function showResponse(text) {
+      document.getElementById("response").innerText = text;
+    }
+
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+      recognition.lang = 'de-DE';
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const text = event.results[0][0].transcript.toLowerCase();
+        console.log("Gesagt:", text);
+
+        if (text.includes("uhr")) {
+          const now = new Date();
+          const answer = "Es ist " + now.toLocaleTimeString('de-DE');
+          speak(answer);
+          showResponse(answer);
+        } else if (text.includes("salat")) {
+          const answer = "Hier ist ein einfaches Rezept für griechischen Salat: Tomaten, Gurken, Feta, Oliven und Olivenöl.";
+          speak(answer);
+          showResponse(answer);
+        } else if (text.includes("mail")){
+            speak("An wenn willst du eine Email schreiben")
+            var mailtolink = prompt ("An wenn willst du eine Email schreiben ?")
+            window.open("mailto:" + mailtolink)
+        } else if (text.includes("minecraft")){
+            speak("Überlebe 25 Tage ohne Cheaten")
+        } else if (text.includes("Nenne beispiele für Schrott")){
+            speak ("Videospiele")
+        
+        } else if (text.includes("rick")){
+            speak("Das hier")
+            window.open("https://www.youtube.com/shorts/SXHMnicI6Pg")
+
+        
+        } else {
+          const answer = "Das habe ich leider nicht verstanden.";
+          speak(answer);
+          showResponse(answer);
+          console.log(text)
+        }
+      };
+    }
+  </script>
+</body>
+</html>
