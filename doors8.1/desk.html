@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Linksammlung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Grundlegende Stildefinitionen */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            /* background-color: #0078D7; */
+            background-image: url(start.png);
+            color: white;
+            margin: 0;
+            padding: 0;
+            overflow-y: hidden; /* Verhindert vertikales Scrollen auf der Seite */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Stil für den Kopfbereich, der Start-Titel und den Knopf enthält */
+        .header {
+            position: relative; /* Wichtig für die Positionierung des Knopfs */
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header .title {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        /* Stil für den Desktop-Knopf (die Tür) */
+        .desktop-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #D32F2F;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .desktop-button:hover {
+            background-color: #B71C1C;
+        }
+
+        /* SVG-Stil für die Tür (ein komplexes, stilisiertes Icon) */
+        .desktop-button svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Hauptcontainer für das scrollbare Kachelgitter */
+        .main-content {
+            padding: 0 20px;
+            flex-grow: 1;
+            overflow-x: auto; /* Erlaubt horizontales Scrollen */
+            -webkit-overflow-scrolling: touch; /* Besserer Scroll-Effekt auf iOS */
+        }
+        
+        /* Stil für das Kachelgitter mit drei Zeilen */
+        .tile-grid {
+            display: grid;
+            grid-auto-flow: column; /* Anordnung in Spalten, die horizontal scrollen */
+            grid-template-rows: repeat(3, minmax(150px, 1fr)); /* Definiert 3 Reihen mit fester Höhe */
+            gap: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            width: fit-content; /* Passt die Breite des Rasters an den Inhalt an */
+        }
+
+        /* Scrollbar-Stil (Chrome, Edge, Safari) */
+        .main-content::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        /* Basisstil für jede Kachel */
+        .tile {
+            position: relative;
+            background-color: #2D2D30;
+            border-radius: 8px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tile:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Größen der Kacheln innerhalb des Rasters */
+        .small-tile {
+            grid-row: span 1;
+            grid-column: span 1;
+            width: 150px;
+            height: 150px;
+        }
+
+        .medium-tile {
+            grid-row: span 1;
+            grid-column: span 2;
+            width: 310px;
+            height: 150px;
+        }
+
+        .large-tile {
+            grid-row: span 2;
+            grid-column: span 2;
+            width: 310px;
+            height: 310px;
+        }
+
+        /* Inhalt der Kacheln */
+        .tile-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-align: left;
+            box-sizing: border-box;
+        }
+
+        .tile-content .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tile-content .title {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+
+        .tile-content .subtitle {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        /* Farb-Klassen für Kacheln */
+        .blue { background-color: #0078D7; }
+        .green { background-color: #009944; }
+        .red { background-color: #D32F2F; }
+        .purple { background-color: #663399; }
+        .orange { background-color: #FF8C00; }
+        .teal { background-color: #008080; }
+        .dark-blue { background-color: #003366; }
+        .brown { background-color: #8B4513; }
+        .cyan { background-color: #00BCD4; }
+        .pink { background-color: #E91E63; }
+        .black { background-color: #000; } /* Neue Klasse für die schwarze Kachel */
+    </style>
+</head>
+<body>
+
+<!-- Kopfbereich mit Titel und dem Desktop-Knopf -->
+<div class="header">
+    <h1 class="title">Start</h1>
+    <button class="desktop-button" onclick="closeWindow()">
+        <!-- SVG für eine einfache Tür -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-4h2v2h-2zm-2-4h2v2h-2zm4-4h2v2h-2zm-4 4h2v2h-2zm4-4h2v2h-2zm-4 4h2v2h-2zm8 0h-2v-2h2zm-4-4h2v2h-2zm-2 4h-2v-2h2zm4-4h2v2h-2zm-4-4h2v2h-2zm-4 4h2v2h-2zm4-4h2v2h-2z"/>
+        </svg>
+    </button>
+</div>
+
+<!-- Hauptcontainer für das horizontal scrollbare Kachelgitter -->
+<div class="main-content">
+    <div class="tile-grid">
+
+        <!-- Kacheln für die erste Reihe -->
+        <a href="https://app.schildi.chat/#/welcome" class="tile small-tile blue" target="_blank">
+            <div class="tile-content">
+                <div class="icon">💬</div>
+                <div class="title">SchildiChat</div>
+            </div>
+        </a>
+
+        <a href="pdf.html" class="tile small-tile blue" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🖺</div>
+                <div class="title">Workx 8</div>
+            </div>
+        </a>
+
+        
+
+        <a href="https://m.youtube.com" class="tile small-tile red" target="_blank">
+            <div class="tile-content">
+                <div class="icon">▶️</div>
+                <div class="title">YouTube</div>
+            </div>
+        </a>
+
+
+        <a href="https://www.spiele-for-free.de" class="tile small-tile red" target="_blank">
+            <div class="tile-content">
+                <div class="icon">Game</div>
+                <div class="title">Spiele for free de</div>
+            </div>
+        </a>
+
+        <a href="https://www.canvas.com/" class="tile small-tile purple" target="_blank">
+            <div class="tile-content">
+                <div class="icon">E</div>
+                <div class="title">Video & Photo AI</div>
+            </div>
+        </a>
+
+        
+
+        
+
+        <a href="https://www.wikipedia.org" class="tile small-tile purple" target="_blank">
+            <div class="tile-content">
+                <div class="icon">📚</div>
+                <div class="title">Wikipedia</div>
+            </div>
+        </a>
+        <a href="https://murena.io/apps/files/" class="tile small-tile blue" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🗃️</div>
+                <div class="title">Cloud File Manager</div>
+            </div>
+        </a>
+        <a href="https://www.classicube.net/server/play/" class="tile small-tile blue" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🎮</div>
+                <div class="title">Minecraft Classic</div>
+            </div>
+        </a>
+
+        <!-- Kacheln für die zweite Reihe -->
+        <a href="https://murena.io/apps/onlyoffice/581460135" class="tile medium-tile black" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🗎</div>
+                <div class="text">
+                    <div class="title">onlyoffice TextEditor</div>
+                    <div class="subtitle">A clone of word</div>
+                </div>
+            </div>
+        </a>
+        
+        <a href="https://murena.io/apps/onlyoffice/581461876" class="tile small-tile orange" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🖺</div>
+                <div class="title">Online Office Spreedsheets</div>
+            </div>
+        </a>
+
+        <!-- Kacheln für die dritte Reihe -->
+        <a href="ib.html" class="tile small-tile teal" target="_blank">
+            <div class="tile-content">
+                <div class="icon">Internet Xplo</div>
+                <div class="title">Web Browser</div>
+            </div>
+        </a>
+        
+        <a href="https://murena.io/apps/onlyoffice/581464136" class="tile small-tile teal" target="_blank">
+            <div class="tile-content">
+                <div class="icon">📈</div>
+                <div class="title">onlyoffice Presentation</div>
+            </div>
+        </a>
+        
+        <a href="https://www.pinterest.com" class="tile small-tile brown" target="_blank">
+            <div class="tile-content">
+                <div class="icon">📍</div>
+                <div class="title">Pinterest</div>
+            </div>
+        </a>
+
+        <a href="https://www.photopea.com/" class="tile medium-tile dark-blue" target="_blank">
+            <div class="tile-content">
+                <div class="icon">📺</div>
+                <div class="text">
+                    <div class="title">photopea</div>
+                    <div class="subtitle">Image Editing</div>
+                </div>
+            </div>
+        </a>
+
+        
+
+        <a href="https://youareblogging.github.io/" class="tile small-tile red" target="_blank">
+            <div class="tile-content">
+                <div class="icon">📰</div>
+                <div class="title">You Are Blogging</div>
+            </div>
+        </a>
+
+        <a href="https://www.twitch.tv" class="tile small-tile purple" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🎮</div>
+                <div class="title">Twitch</div>
+            </div>
+        </a>
+        
+        <a href="https://www.google.com/maps" class="tile small-tile green" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🗺️</div>
+                <div class="title">Google Maps</div>
+            </div>
+        </a>
+        
+        <a href="https://murena.io/apps/snappymail/" class="tile small-tile red" target="_blank">
+            <div class="tile-content">
+                <div class="icon">✉️</div>
+                <div class="title">Mail</div>
+            </div>
+        </a>
+
+        <a href="https://weather.com" class="tile small-tile cyan" target="_blank">
+            <div class="tile-content">
+                <div class="icon">☀️</div>
+                <div class="title">Wetter</div>
+            </div>
+        </a>
+
+        <a href="https://music.youtube.com/" class="tile small-tile green" target="_blank">
+            <div class="tile-content">
+                <div class="icon">🎵</div>
+                <div class="title">Yt Music</div>
+            </div>
+        </a>
+
+        <a href="manull.html" class="tile medium-tile pink" target="_blank">
+            <div class="tile-content">
+                <div class="icon">?</div>
+                <div class="text">
+                    <div class="title">Help</div>
+                    <div class="subtitle">Explains your Computer</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="https://murena.io/apps/notes/welcome" class="tile small-tile orange" target="_blank">
+            <div class="tile-content">
+                <div class="icon">📝</div>
+                <div class="title">Notes</div>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<script>
+    // Funktion zum Schließen des Browser-Fensters
+    function closeWindow() {
+        // Hinweis: Viele moderne Browser blockieren window.close() aus Sicherheitsgründen,
+        // wenn das Fenster nicht durch ein Skript geöffnet wurde.
+        window.close();
+    }
+</script>
+
+</body>
+</html>

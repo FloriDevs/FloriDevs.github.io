@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzer-Login</title>
+    <!-- Tailwind CSS wird über CDN geladen -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Zusätzlicher Stil für das Windows 8.1 Design */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0078D7; /* Ein typisches Windows-Blau */
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* Entfernt die Ränder von Tailwind, um ein flaches, eckiges Design zu erhalten */
+        .rounded-none {
+            border-radius: 0;
+        }
+    </style>
+</head>
+<body class="bg-[#0078D7] text-white">
+
+    <!-- Haupt-Container: Ein zentrierter, eckiger Block -->
+    <div id="main-container" class="flex flex-col items-center justify-center p-8 m-4 max-w-sm w-full h-80 bg-[#005B9A] shadow-none border-none">
+
+        <!-- Überschrift und Bereich für den Benutzernamen -->
+        <h1 class="text-3xl font-light mb-4 text-white">Anmeldung</h1>
+        
+        <!-- Bereich zur Anzeige des Cookie-Werts für 'userName' -->
+        <div id="username-display" class="bg-[#003E6D] text-white text-center font-bold p-4 mb-6 w-full shadow-inner">
+            Cookie "userName" wird geladen...
+        </div>
+
+        <!-- Eingabefeld für das Passwort -->
+        <input 
+            type="password" 
+            id="user-password" 
+            placeholder="Passwort eingeben" 
+            class="bg-[#003E6D] text-white placeholder-gray-400 p-3 w-full mb-4 focus:outline-none focus:ring-2 focus:ring-white border-2 border-transparent focus:border-white transition-colors duration-150"
+        />
+
+        <!-- Schaltfläche für den Login -->
+        <button id="login-btn" class="bg-[#00B900] hover:bg-[#008900] text-white font-bold py-2 px-6 w-full transition-colors duration-150 shadow-none">
+            Anmelden
+        </button>
+
+        <!-- Bereich für Statusmeldungen -->
+        <div id="message-box" class="mt-4 text-center font-semibold text-white"></div>
+    </div>
+
+    <!-- Container für die Weiterleitungsmeldung, wird dynamisch angezeigt -->
+    <div id="redirect-message" class="hidden flex-col items-center justify-center p-8 m-4 max-w-sm w-full h-40 bg-[#005B9A]">
+        <h2 class="text-2xl font-light text-white">Weiterleitung...</h2>
+        <p id="redirect-text" class="text-white mt-2"></p>
+    </div>
+
+    <script>
+        // Funktion zum Abrufen eines Cookies anhand des Namens
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // Funktion zum Anzeigen des 'userName' Cookies und zur Steuerung der Weiterleitung
+        function displayContent() {
+            const username = getCookie("userName");
+            const mainContainer = document.getElementById("main-container");
+            const redirectMessage = document.getElementById("redirect-message");
+            const redirectText = document.getElementById("redirect-text");
+
+            if (username) {
+                // Cookie existiert, zeige das Login-Feld
+                mainContainer.style.display = 'flex';
+                redirectMessage.style.display = 'none';
+                document.getElementById("username-display").textContent = username;
+            } else {
+                // Kein Cookie, zeige Weiterleitungsmeldung und leite weiter
+                mainContainer.style.display = 'none';
+                redirectMessage.style.display = 'flex';
+                redirectText.textContent = "Kein 'userName' Cookie gefunden. Sie werden zu 'setup.html' weitergeleitet...";
+                setTimeout(() => {
+                    window.location.href = 'setup.html';
+                }, 3000); // Weiterleitung nach 3 Sekunden
+            }
+        }
+
+        // Event-Listener für den Login-Button
+        document.getElementById("login-btn").addEventListener("click", () => {
+            const password = document.getElementById("user-password").value;
+            const messageBox = document.getElementById("message-box");
+
+            if (password === "userPassword") {
+                messageBox.textContent = "Passwort korrekt. Weiterleitung zu 'desk.html'...";
+                setTimeout(() => {
+                    window.location.href = 'desk.html';
+                }, 1000); // Weiterleitung nach 1 Sekunde
+            } else {
+                messageBox.textContent = "Falsches Passwort!";
+            }
+        });
+
+        // Beim Laden der Seite die Initialprüfung durchführen
+        window.onload = displayContent;
+    </script>
+</body>
+</html>

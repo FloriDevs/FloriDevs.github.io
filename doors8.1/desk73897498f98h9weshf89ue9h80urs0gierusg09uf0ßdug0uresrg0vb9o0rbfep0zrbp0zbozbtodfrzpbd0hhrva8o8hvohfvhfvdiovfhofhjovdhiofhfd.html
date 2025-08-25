@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moep</title>
+    <!-- Google Fonts importieren für die Schriftart 'Inter' -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Grundlegende Stilregeln für die Seite */
+        body {
+            /* Den Standard-Rand entfernen */
+            margin: 0;
+            /* Die Schriftart 'Inter' für die gesamte Seite festlegen */
+            font-family: 'Inter', sans-serif;
+            /* Die Seite auf die volle Größe des Viewports einstellen */
+            height: 100vh;
+            width: 100vw;
+            /* Ein Hintergrundbild (Wallpaper) festlegen */
+            background-image: url('b.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: left;
+            /* Die Inhalte vertikal ausrichten, um die Leiste unten zu fixieren */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            /* Verhindert, dass der Inhalt scrollt, wenn er nicht über den Bildschirm hinausgeht */
+            overflow: hidden;
+        }
+
+        /* Stilregeln für die Taskleiste */
+        .taskbar {
+            /* Die Leiste am unteren Rand fest positionieren */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            /* Semi-transparenter Hintergrund mit einem Blaustich */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Der Blur-Effekt für den "Milchglas"-Look */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            /* Abstand innen */
+            padding: 10px 10px;
+            /* Die Elemente horizontal zentrieren */
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            /* Abgerundete Ecken am oberen Rand */
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            /* Ein leichter Schatten für eine bessere visuelle Trennung */
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Stilregeln für die Icons in der Leiste */
+        .taskbar-icons {
+            display: flex;
+            align-items: left;
+            gap: 15px;
+            margin: 0 20px;
+        }
+
+        /* Stilregeln für einzelne Icons */
+        .icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Hover-Effekt für die Icons */
+        .icon:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Stilregeln für das Start-Icon */
+        .start-icon {
+            font-size: 24px;
+        }
+
+        /* Stilregeln für die Suche */
+        .search-container {
+            position: relative;
+            margin-right: 20px;
+        }
+
+        .search-box {
+            width: 250px;
+            padding: 10px 40px 10px 15px;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-box:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+        }
+
+        /* Stilregeln für den System-Tray-Bereich */
+        .system-tray {
+            display: flex;
+            align-items: left;
+            gap: 15px;
+            color: white;
+            font-size: 14px;
+            margin-left: auto; /* Schiebt diesen Bereich nach rechts */
+            padding: 0 10px;
+        }
+
+        .tray-icon {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .tray-icon:hover {
+            color: white;
+        }
+
+        .date-time {
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        .time {
+            font-weight: 500;
+        }
+
+        .date {
+            font-weight: 400;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Stilregeln für SVG-Icons */
+        button {
+            width: 48px;
+            height: 48px;
+            fill: white;
+        }
+
+        /* Stilregeln für die Hauptansicht */
+        .main-content {
+            flex-grow: 1; /* Nimmt den restlichen Platz ein */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Leerer Hauptinhalt, nur für den Hintergrund da -->
+    <div class="main-content"></div>
+
+    <!-- Die untere Leiste (Taskbar) -->
+    <div class="taskbar">
+
+        <!-- Suchbereich -->
+        <button onclick="window.open('start.html')">🚪</button>
+    <script>
+        /**
+         * @fileoverview Dieses Skript aktualisiert die Uhrzeit und das Datum
+         * in der unteren Leiste in Echtzeit.
+         */
+        
+        // Holt die HTML-Elemente für Uhrzeit und Datum
+        const timeElement = document.querySelector('.time');
+        const dateElement = document.querySelector('.date');
+
+        /**
+         * Aktualisiert die Uhrzeit und das Datum.
+         */
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Formatierung der Uhrzeit (z.B. 10:30)
+            const time = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+            
+            // Formatierung des Datums (z.B. 23.08.2025)
+            const date = now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            // Die Elemente mit den neuen Werten befüllen
+            timeElement.textContent = time;
+            dateElement.textContent = date;
+        }
+
+        // Aktualisiert die Uhrzeit und das Datum sofort beim Laden
+        updateDateTime();
+        
+        // Aktualisiert die Uhrzeit und das Datum alle 60 Sekunden
+        setInterval(updateDateTime, 60000);
+    </script>
+
+</body>
+</html>
+

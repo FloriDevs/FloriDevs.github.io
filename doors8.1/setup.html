@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Metadata for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Account</title>
+    <style>
+        body {
+            background-color: #00008B; /* Dark Blue */
+            color: white;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background-color: #008080; /* Teal/Blue-Green */
+            padding: 20px 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+        }
+        .top-bar::before {
+            content: '';
+            background-color: #008000; /* Green */
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 100%;
+            border-bottom-left-radius: 100px;
+            border-bottom-right-radius: 100px;
+        }
+        .header-text {
+            font-size: 3rem;
+            font-weight: bold;
+            color: black;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+        }
+        .form-container {
+            margin-top: 200px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            margin-left: 50px;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            width: 100px;
+            margin-right: 10px;
+        }
+        .form-group input {
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid white;
+            color: white;
+            padding: 5px;
+            flex-grow: 1;
+        }
+        .form-group input::placeholder {
+            color: lightgray;
+        }
+        button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .message-area {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top bar and header text -->
+    <div class="top-bar"></div>
+    <div class="header-text">create new</div>
+
+    <!-- Main container for the form -->
+    <div class="form-container">
+        
+        <!-- Form fields -->
+        <div>
+            <!-- Input field for the name -->
+            <div class="form-group">
+                <label for="nameInput">Name</label>
+                <input type="text" id="nameInput" placeholder="">
+            </div>
+
+            <!-- Input field for the password -->
+            <div class="form-group">
+                <label for="passwordInput">Password</label>
+                <input type="password" id="passwordInput" placeholder="">
+            </div>
+            
+            <!-- Input field for the token -->
+            <div class="form-group">
+                <label for="tokenInput">Toke</label>
+                <input type="text" id="tokenInput" placeholder="Floxel">
+                <h1>(Type just one of tham: Floxel, XPvl, 8, skip, exest)</h1>
+            </div>
+            
+            <!-- Submit button -->
+            <button onclick="submitForm()">
+                Submit
+            </button>
+            
+        </div>
+
+        <!-- Message area to display status messages -->
+        <div id="messageArea" class="message-area">
+            <!-- This area will display status messages -->
+        </div>
+    </div>
+
+    <script>
+        /**
+         * @fileoverview This script saves and loads form data in cookies and provides a "get on" function.
+         */
+        
+        // --- Cookie helper functions ---
+        
+        /**
+         * Saves a value in a cookie.
+         * @param {string} name - The name of the cookie.
+         * @param {string} value - The value to be saved.
+         * @param {number} days - The number of days the cookie should be valid.
+         */
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+        }
+
+        /**
+         * Reads the value from a specific cookie.
+         * @param {string} name - The name of the cookie to be read.
+         * @returns {string} - The value of the cookie or an empty string if not found.
+         */
+        function getCookie(name) {
+            const cookieName = name + "=";
+            const cookieArray = document.cookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+                let cookie = cookieArray[i];
+                while (cookie.charAt(0) === ' ') {
+                    cookie = cookie.substring(1);
+                }
+                if (cookie.indexOf(cookieName) === 0) {
+                    return decodeURIComponent(cookie.substring(cookieName.length, cookie.length));
+                }
+            }
+            return "";
+        }
+        
+        // --- Form functions ---
+
+        /**
+         * Gets the values from the input fields, saves them to cookies, and displays them.
+         */
+        function submitForm() {
+            const nameInput = document.getElementById('nameInput');
+            const passwordInput = document.getElementById('passwordInput');
+            const tokenInput = document.getElementById('tokenInput');
+            const messageArea = document.getElementById('messageArea');
+
+            const name = nameInput.value;
+            const password = passwordInput.value;
+            const token = tokenInput.value;
+
+            // Show the message area
+            messageArea.style.display = 'block';
+
+            // Check if all fields are filled
+            if (!name || !password || !token) {
+                messageArea.style.backgroundColor = 'red';
+                messageArea.style.color = 'white';
+                messageArea.innerHTML = `Error: Please fill in all fields.`;
+                return;
+            }
+
+            // Save the data to cookies for 30 days
+            setCookie("userName", name, 30);
+            setCookie("userPassword", password, 30);
+            setCookie("userToken", token, 30);
+
+            // Confirmation message
+            messageArea.style.backgroundColor = 'lightgreen';
+            messageArea.style.color = 'black';
+            messageArea.innerHTML = `Data saved in cookies!<br>Name, password, and token have been secured.`;
+            
+            console.log("Form submitted and data saved to cookies.");
+        }
+        
+        /**
+         * Reads the values from the cookies and populates the input fields.
+         */
+        function loadFormData() {
+            // Read the data from the cookies into variables
+            const loadedName = getCookie("userName");
+            const loadedPassword = getCookie("userPassword");
+            const loadedToken = getCookie("userToken");
+
+            // Populate the input fields if cookies exist
+            if (loadedName) {
+                document.getElementById('nameInput').value = loadedName;
+                document.getElementById('passwordInput').value = loadedPassword;
+                document.getElementById('tokenInput').value = loadedToken;
+                
+                // Optional: Show a message that the data was loaded
+                const messageArea = document.getElementById('messageArea');
+                messageArea.style.display = 'block';
+                messageArea.style.backgroundColor = 'lightblue';
+                messageArea.style.color = 'black';
+                messageArea.innerHTML = `Data successfully loaded!<br>Welcome back, ${loadedName}!`;
+            }
+        }
+
+        /**
+         * Opens a new tab with an example link.
+         */
+        function openLink() {
+            // Opens a new page.
+            window.open('https://example.com', '_blank');
+            console.log("New tab opened with https://example.com");
+        }
+        
+        // Load the data when the page first loads
+        window.onload = loadFormData;
+    </script>
+</body>
+</html>

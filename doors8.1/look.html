@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Startseite</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('sc.png');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      cursor: pointer;
+    }
+
+    #clock-container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: left;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px 16px;
+      border-radius: 8px;
+    }
+
+    #time {
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    #date {
+      font-size: 18px;
+      margin-top: 4px;
+    }
+  </style>
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const date = now.toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('time').textContent = time;
+      document.getElementById('date').textContent = date;
+    }
+
+    setInterval(updateClock, 1000);
+    window.onload = updateClock;
+
+    document.addEventListener('click', () => {
+      window.location.href = 'desk.html';
+    });
+  </script>
+</head>
+<body>
+  <div id="clock-container">
+    <div id="time"></div>
+    <div id="date"></div>
+  </div>
+</body>
+</html>
+

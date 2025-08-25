@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- Metadaten für Responsive Design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie-Speicherbeispiel</title>
+    <!-- Tailwind CSS für die Gestaltung -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Verwendung der Schriftart Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Hauptcontainer für die Anwendung -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Cookie-Speicherung</h1>
+        <p class="text-gray-600 mb-6 text-center">
+            Gib einen Wert ein und speichere ihn in einem Cookie. Lade die Seite neu, um zu sehen, wie der Wert geladen wird.
+        </p>
+
+        <!-- Eingabefeld und Buttons -->
+        <div class="flex flex-col space-y-4">
+            <input type="text" id="dataInput" placeholder="Gib hier Daten ein..."
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+            
+            <button onclick="saveData()"
+                    class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md">
+                In Cookie speichern
+            </button>
+            
+            <button onclick="loadData()"
+                    class="w-full bg-gray-500 text-white font-semibold py-3 rounded-lg hover:bg-gray-600 transition-all shadow-md">
+                Aus Cookie laden
+            </button>
+        </div>
+
+        <!-- Bereich zur Anzeige des geladenen Werts -->
+        <div id="displayArea" class="mt-6 p-4 bg-blue-100 border border-blue-200 rounded-lg text-blue-800 break-words transition-all">
+            <!-- Dieser Bereich wird den geladenen Wert anzeigen -->
+            Kein Wert geladen.
+        </div>
+    </div>
+
+    <script>
+        /**
+         * @fileoverview Dieses Skript demonstriert das Speichern und Laden von Daten in Cookies.
+         */
+
+        /**
+         * Speichert einen Wert in einem Cookie.
+         * @param {string} name - Der Name des Cookies.
+         * @param {string} value - Der Wert, der gespeichert werden soll.
+         * @param {number} days - Die Anzahl der Tage, an denen das Cookie gültig sein soll.
+         */
+        function setCookie(name, value, days) {
+            // Erstellt ein Verfallsdatum für das Cookie.
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+
+            // Kodiert den Wert, um Sonderzeichen zu behandeln.
+            const encodedValue = encodeURIComponent(value);
+
+            // Setzt das Cookie. Der 'path=/' stellt sicher, dass es auf der gesamten Website verfügbar ist.
+            document.cookie = name + "=" + encodedValue + ";" + expires + ";path=/";
+        }
+
+        /**
+         * Liest den Wert aus einem bestimmten Cookie.
+         * @param {string} name - Der Name des Cookies, das gelesen werden soll.
+         * @returns {string} - Der Wert des Cookies oder eine leere Zeichenkette, wenn es nicht gefunden wird.
+         */
+        function getCookie(name) {
+            // Fügt ein Gleichheitszeichen zum Namen hinzu, um die Suche zu erleichtern.
+            const cookieName = name + "=";
+            // Ruft alle Cookies ab und teilt sie in ein Array auf.
+            const cookieArray = document.cookie.split(';');
+
+            // Iteriert durch das Cookie-Array.
+            for (let i = 0; i < cookieArray.length; i++) {
+                let cookie = cookieArray[i];
+                // Entfernt Leerzeichen am Anfang des Cookies.
+                while (cookie.charAt(0) === ' ') {
+                    cookie = cookie.substring(1);
+                }
+                // Überprüft, ob das Cookie mit dem gesuchten Namen beginnt.
+                if (cookie.indexOf(cookieName) === 0) {
+                    // Dekodiert und gibt den Wert zurück.
+                    const decodedValue = decodeURIComponent(cookie.substring(cookieName.length, cookie.length));
+                    return decodedValue;
+                }
+            }
+            // Gibt eine leere Zeichenkette zurück, wenn das Cookie nicht gefunden wird.
+            return "";
+        }
+
+        /**
+         * Speichert den Wert aus dem Eingabefeld in einem Cookie.
+         */
+        function saveData() {
+            const dataInput = document.getElementById('dataInput');
+            const dataValue = dataInput.value;
+            const displayArea = document.getElementById('displayArea');
+
+            if (dataValue) {
+                // Speichert den Wert in einem Cookie namens "userData" für 30 Tage.
+                setCookie("userData", dataValue, 30);
+                displayArea.innerHTML = `<span class="font-semibold">Erfolgreich gespeichert!</span>
+                                          <br>Wert: "${dataValue}"`;
+                console.log("Daten in Cookie gespeichert:", dataValue);
+            } else {
+                displayArea.innerHTML = `<span class="font-semibold text-red-600">Fehler:</span> Bitte gib einen Wert ein.`;
+            }
+        }
+
+        /**
+         * Liest den Wert aus dem Cookie und zeigt ihn an.
+         */
+        function loadData() {
+            // Ruft den Wert aus dem Cookie "userData" ab und speichert ihn in der Variable `loadedValue`.
+            const loadedValue = getCookie("userData");
+            const displayArea = document.getElementById('displayArea');
+
+            if (loadedValue) {
+                // Zeigt den geladenen Wert im Anzeigebereich an.
+                displayArea.innerHTML = `<span class="font-semibold">Wert aus Cookie geladen:</span>
+                                          <br>Variable 'loadedValue' enthält: "${loadedValue}"`;
+                console.log("Daten aus Cookie geladen:", loadedValue);
+            } else {
+                displayArea.innerHTML = `<span class="font-semibold text-gray-600">Kein Cookie gefunden.</span>`;
+            }
+        }
+
+        // Lädt die Daten beim ersten Laden der Seite, um den gespeicherten Wert zu überprüfen.
+        // loadData();
+    </script>
+</body>
+</html>

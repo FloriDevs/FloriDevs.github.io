@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Full-screen container using flexbox for centering */
+        .full-screen-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #1a1a2e; /* Dunkler Hintergrund */
+            color: #ffffff;
+            gap: 2rem;
+        }
+
+        /* Styling for the large emoji */
+        .door-emoji {
+            font-size: 8rem;
+            text-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            animation: bounce-in 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes bounce-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* Styling for the small spinner */
+        .small-spinner {
+            width: 30px;
+            height: 30px;
+            border: 4px solid #4a4a6e;
+            border-top: 4px solid #ff79c6;
+            border-radius: 50%;
+            /* Die Animationsdauer wird jetzt über JavaScript gesteuert */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="full-screen-container">
+        <div class="door-emoji">
+            🚪
+        </div>
+        <div class="small-spinner" id="spinner"></div>
+    </div>
+
+    <script>
+        // Use a variable to control the animation speed for easy adjustment
+        const spinnerSpeed = 0.5; // in seconds
+        
+        // Find the spinner element and apply the animation style
+        const spinner = document.getElementById('spinner');
+        if (spinner) {
+            spinner.style.animation = `spin ${spinnerSpeed}s linear infinite`;
+        }
+
+        // Redirect to look.html after 20 seconds
+        setTimeout(() => {
+            window.location.href = 'look.html';
+        }, 4000); // 20000 milliseconds = 20 seconds
+    </script>
+</body>
+</html>
+
