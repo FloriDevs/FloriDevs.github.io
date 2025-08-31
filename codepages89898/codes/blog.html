@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloriDevs Blog</title>
+    <!-- Inter Schriftart von Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        a{
+            color: cyan;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+        }
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+        .content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-bottom: 3rem;
+        }
+        .post-card {
+            background-color: rgba(15, 23, 42, 0.9);
+            border-color: rgba(52, 211, 153, 0.5);
+            transition: all 0.3s ease;
+        }
+        .post-card:hover {
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.8);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="antialiased font-inter text-green-400">
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <div class="content">
+        <!-- Header -->
+        <header class="py-8 text-center">
+            <h1 class="text-4xl sm:text-5xl font-bold text-green-300">FloriDevs Blog</h1>
+            <p class="text-lg mt-2 text-green-400">Our world of IT.</p>
+        </header>
+
+        <!-- Hauptinhalt des Blogs -->
+        <main class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold mb-8 text-center text-green-300">Newsted Posts:</h2>
+            <div class="space-y-8">
+
+                
+
+                <!-- Blogbeitrag mit Bild -->
+                <article class="post-card border rounded-2xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold mb-2 text-white">Windows Vista</h3>
+                    <p class="text-sm text-green-400 mb-4">31th of August 2025</p>
+                    <a href="https://1.bp.blogspot.com/-ldZeYvChh5I/UVocJmolgHI/AAAAAAAABOc/d1zCc_d4FK0/s1600/Windows_Vista_Desktop.png"><img src="https://1.bp.blogspot.com/-ldZeYvChh5I/UVocJmolgHI/AAAAAAAABOc/d1zCc_d4FK0/s1600/Windows_Vista_Desktop.png" alt="Beispielbild für einen Blog-Eintrag" class="w-full rounded-2xl mb-4"></a>
+                    <p class="mb-4">
+                       My recent experience with <a href="https://en.wikipedia.org/wiki/Windows_Vista"></a>, a Microsoft operating system released in 2007, was a significant challenge. The well-known criticisms from its original release, particularly the high system requirements <a href="https://en.wikipedia.org/wiki/Windows_11">(like another os by them)</a> and the perceived excessive security, proved to be highly relevant.
+
+A major point of frustration was the User Account Control (UAC). The process of installing VirtualBox Guest Extensions required numerous confirmations, highlighting how Vista's security architecture often came at the cost of user-friendliness.
+
+Furthermore, the installation process itself was highly unstable. The initial setup failed, preventing a subsequent boot and even causing the VirtualBox environment to crash. Even on the third successful attempt, the system showed significant instability.
+
+These issues underscore why Windows Vista was widely criticized for its performance, stability, and user experience. For a smooth and efficient computing experience, I recommend using modern and proven operating systems, particularly from the open-source community.
+
+For an optimal computing environment, I suggest considering the following alternatives:
+
+<a href="https://www.linuxmint.com/">Linux Mint</a>: A stable and user-friendly distribution, ideal for those new to Linux.
+
+<a href="https://www.ubuntu.com/">Ubuntu</a>: A widely popular Linux distribution with a large community and extensive support.
+
+<a href="https://www.zorinos.com/">Zorin OS</a>: Specifically designed for users transitioning from Windows, offering a familiar interface.
+
+
+                </article>
+                
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('matrixCanvas');
+            if (!canvas) {
+                console.error('Canvas element not found!');
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+
+            let width, height;
+            const resizeCanvas = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            };
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const columns = Math.floor(width / 20) + 1;
+            const drops = Array(columns).fill(0);
+            const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()-=_+[]{}|;:\'\",.<>?/~`';
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#34D399'; // A more vibrant green for text
+                ctx.font = '20px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * 20, drops[i] * 20);
+
+                    if (drops[i] * 20 > height && Math.random() > 0.95) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 50);
+        });
+    </script>
+</body>
+</html>
