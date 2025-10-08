@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>OS Spoofer</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 10px;
+            width: 220px;
+            background-color: #f7f7f7;
+        }
+        h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.1em;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        button {
+            background-color: #0070e0;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+            margin: 2px 0;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s, transform 0.1s;
+            font-weight: 500;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        #status {
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 4px;
+            background-color: #e6f7e6;
+            color: #38761d;
+            text-align: center;
+            font-size: 0.9em;
+            height: 18px; /* Feste Höhe, um CLS zu vermeiden */
+        }
+    </style>
+</head>
+<body>
+    <h3>OS User-Agent wählen</h3>
+    <div class="button-grid">
+        <button data-os="windows">Windows</button>
+        <button data-os="macos">macOS</button>
+        <button data-os="linux">Linux</button>
+        <button data-os="android">Android</button>
+    </div>
+    <div id="status">Bereit.</div>
+
+    <script>
+        // Funktion zum Senden der Nachricht an den Hintergrund-Skript
+        function sendMessage(os) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = `Wird auf ${os} umgestellt...`;
+            statusElement.style.backgroundColor = '#fef3c7'; // Gelb für Laden
+            statusElement.style.color = '#92400e'; 
+
+            // Benutze 'browser' API, da dies eine Firefox WebExtension ist
+            browser.runtime.sendMessage({ os: os })
+                .then(response => {
+                    // Erfolg
+                    const formattedOS = os.charAt(0).toUpperCase() + os.slice(1);
+                    statusElement.textContent = `${formattedOS} ist jetzt aktiv!`;
+                    statusElement.style.backgroundColor = '#e6f7e6'; // Grün für Erfolg
+                    statusElement.style.color = '#38761d';
+                })
+                .catch(error => {
+                    // Fehler
+                    statusElement.textContent = `Fehler beim Wechsel: ${error.error || 'Unbekannt'}`;
+                    statusElement.style.backgroundColor = '#fee2e2'; // Rot für Fehler
+                    statusElement.style.color = '#991b1b';
+                });
+        }
+
+        // Event-Listener für alle Buttons
+        document.querySelectorAll('.button-grid button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const os = e.target.getAttribute('data-os');
+                if (os) {
+                    sendMessage(os);
+                }
+            });
+        });
+
+        // Beim Laden des Popups den aktuellen Status aus dem Speicher abrufen
+        browser.storage.local.get('selectedOS').then((result) => {
+            const currentOS = result.selectedOS || 'windows'; // Standardwert, falls nichts gefunden wurde
+            const formattedOS = currentOS.charAt(0).toUpperCase() + currentOS.slice(1);
+            document.getElementById('status').textContent = `Aktuell: ${formattedOS}`;
+        });
+    </script>
+</body>
+</html>
