@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloriDevs ImageBoard Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- Dark Mode Theme --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a202c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ecf0f1; /* Standardtextfarbe hell */
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #2d3748; /* Dunkler Container */
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5); /* Angepasster Schatten */
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #ecf0f1; /* Heller Titel */
+            margin-bottom: 10px;
+        }
+
+        .header-title {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .header-subtitle {
+            color: #27ae60;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Button-Farben bleiben gleich, da sie kontrastreich sind */
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .boards-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .board-card {
+            background: #4a5568; /* Dunkle Karten */
+            border: 2px solid #718096;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .board-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            border-color: #667eea;
+        }
+
+        .board-card.active {
+            border-color: #667eea;
+            background: #5a667a;
+        }
+
+        .board-card h3 {
+            margin-bottom: 10px;
+            color: #ecf0f1; /* Heller Text */
+        }
+        
+        .board-card p {
+            color: #bdc3c7; /* Hellerer Text für Details */
+        }
+
+        .board-delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .board-view {
+            background: #1a202c; /* Sehr dunkler Hintergrund für den Hauptbereich */
+            padding: 20px;
+            border-radius: 12px;
+            min-height: 400px;
+            display: none; /* --- GEÄNDERT: Standardmäßig ausgeblendet --- */
+        }
+
+        /* --- NEU: Logik zum Umschalten der Ansicht --- */
+        .container.viewing-board .boards-container {
+            display: none;
+        }
+        .container.viewing-board .board-view {
+            display: block;
+        }
+        /* --- Ende Umschalt-Logik --- */
+
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2d3748; /* Gleiche Farbe wie Container */
+            border-radius: 8px;
+            flex-wrap: wrap; /* Hinzugefügt für kleinere Bildschirme */
+            gap: 10px; /* Hinzugefügt für Abstand */
+        }
+
+        .board-header h2 {
+            color: #667eea;
+            font-size: 2em;
+        }
+
+        .board-name-input {
+            font-size: 1.5em;
+            padding: 8px;
+            border: 2px solid #718096;
+            border-radius: 6px;
+            width: 300px;
+            background: #4a5568; /* Dunkles Input-Feld */
+            color: #ecf0f1; /* Heller Text */
+            flex-grow: 1; /* Hinzugefügt, damit es sich anpasst */
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-item {
+            background: #4a5568; /* Dunkle Bild-Karten */
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .image-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #2d3748; /* Dunkler Platzhalter */
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: #718096; /* Gedämpfte Farbe */
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-name {
+            text-align: center;
+            font-weight: 600;
+            color: #ecf0f1; /* Heller Text */
+            padding: 5px;
+            background: #2d3748; /* Hintergrund für Namen */
+            border-radius: 4px;
+        }
+
+        .image-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-item:hover .image-delete {
+            opacity: 1;
+        }
+
+        /* Add-Button bleibt gleich (Gradient) */
+        .add-image-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 3px dashed white;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .add-image-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .add-image-btn span {
+            font-size: 0.3em;
+            margin-top: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #2d3748; /* Dunkler Modal-Hintergrund */
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            color: #ecf0f1; /* Heller Text im Modal */
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ecf0f1; /* Helle Labels */
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #718096;
+            border-radius: 6px;
+            font-size: 16px;
+            background: #4a5568; /* Dunkle Inputs */
+            color: #ecf0f1; /* Heller Text */
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .fullscreen-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .fullscreen-view.active {
+            display: flex;
+        }
+
+        .fullscreen-content {
+            max-width: 90%;
+            max-height: 80%;
+            background: #2d3748; /* Dunkler Fullscreen-Hintergrund */
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .fullscreen-content img {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .fullscreen-name {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 15px;
+            color: #ecf0f1; /* Heller Text */
+        }
+
+        .close-fullscreen {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white; /* Weißer Button für Kontrast */
+            color: #333; /* Dunkler Text */
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- GEÄNDERT: .container als Referenz für JS -->
+    <div class="container" id="appContainer"> 
+        <header>
+            <h1><span class="header-title">Image</span><span class="header-subtitle">boards</span></h1>
+            <p>Erstelle und verwalte deine Image Boards</p>
+        </header>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="createNewBoard()">+ Neues Board</button>
+            <button class="btn btn-success" onclick="exportAsZip()">Als ZIP exportieren</button>
+            <!-- Neuer Import Button -->
+            <button class="btn btn-warning" onclick="triggerImport()">ZIP importieren</button>
+            <!-- GEÄNDERT: Text des Buttons -->
+            <button class="btn btn-info" onclick="saveToStorage()">Speichern</button>
+            <button class="btn btn-danger" onclick="clearAll()">Alles löschen</button>
+        </div>
+
+        <!-- Verstecktes Datei-Input-Feld für den Import -->
+        <input type="file" id="importFile" accept=".zip" style="display: none;" onchange="importFromZip()">
+
+        <div class="boards-container" id="boardsList"></div>
+
+        <div class="board-view" id="boardView">
+            <div class="board-header">
+                <!-- NEU: "Zurück" Button -->
+                <button class="btn btn-info" onclick="showBoardList()">&larr; Zurück zur Liste</button>
+                <input type="text" class="board-name-input" id="boardNameInput" placeholder="Board Name" onchange="updateBoardName()">
+                <button class="btn btn-primary" onclick="openAddImageModal()">+ Bild hinzufügen</button>
+            </div>
+            <div class="images-grid" id="imagesGrid"></div>
+        </div>
+    </div>
+
+    <!-- Modal für Bild hinzufügen -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <h3>Neues Bild hinzufügen</h3>
+            <div class="form-group">
+                <label>Bild Name:</label>
+                <input type="text" id="imageName" placeholder="Mein Bild">
+            </div>
+            <div class="form-group">
+                <label>Bild hochladen:</label>
+                <input type="file" id="imageFile" accept="image/*">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-danger" onclick="closeModal()">Abbrechen</button>
+                <button class="btn btn-success" onclick="addImage()">Hinzufügen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Ansicht -->
+    <div class="fullscreen-view" id="fullscreenView">
+        <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
+        <div class="fullscreen-content">
+            <img id="fullscreenImage" src="" alt="">
+            <div class="fullscreen-name" id="fullscreenName"></div>
+        </div>
+    </div>
+
+    <!-- Neuer Dialog-Modal für Bestätigungen und Alerts -->
+    <div class="modal" id="dialogModal">
+        <div class="modal-content">
+            <h3 id="dialogTitle"></h3>
+            <p id="dialogText" style="margin-bottom: 20px;"></p>
+            <div class="modal-buttons">
+                <button class="btn btn-danger" id="dialogCancel">Abbrechen</button>
+                <button class="btn btn-success" id="dialogOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        let boards = [];
+        let currentBoardIndex = 0;
+        
+        // GEÄNDERT: Referenz zum Container
+        const appContainer = document.getElementById('appContainer');
+
+        // --- Dialog-Modal Logik ---
+        let dialogCallback = null;
+        const dialogModal = document.getElementById('dialogModal');
+        const dialogOk = document.getElementById('dialogOk');
+        const dialogCancel = document.getElementById('dialogCancel');
+
+        dialogOk.onclick = () => {
+            dialogModal.classList.remove('active');
+            if (dialogCallback) dialogCallback(true);
+        };
+        dialogCancel.onclick = () => {
+            dialogModal.classList.remove('active');
+            if (dialogCallback) dialogCallback(false);
+        };
+
+        function showAlert(title, text) {
+            document.getElementById('dialogTitle').textContent = title;
+            document.getElementById('dialogText').textContent = text;
+            dialogCancel.style.display = 'none';
+            dialogOk.textContent = 'OK';
+            dialogCallback = null;
+            dialogModal.classList.add('active');
+        }
+
+        function showConfirm(title, text, callback) {
+            document.getElementById('dialogTitle').textContent = title;
+            document.getElementById('dialogText').textContent = text;
+            dialogCancel.style.display = 'inline-block';
+            dialogOk.textContent = 'OK';
+            dialogCallback = callback;
+            dialogModal.classList.add('active');
+        }
+        // --- Ende Dialog-Modal Logik ---
+
+        // --- NEU: Funktionen zum Umschalten der Ansicht ---
+        function showBoardList() {
+            appContainer.classList.remove('viewing-board');
+        }
+
+        function showBoardContent() {
+            appContainer.classList.add('viewing-board');
+        }
+        // --- Ende Ansicht-Funktionen ---
+
+
+        function init() {
+            // GEÄNDERT: Lädt aus localStorage statt Cookies
+            const saved = localStorage.getItem('imageboards');
+            if (saved) {
+                try {
+                    boards = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Fehler beim Parsen von localStorage:", e);
+                    boards = [];
+                }
+            }
+            if (boards.length === 0) {
+                boards.push({ name: 'Mein erstes Board', images: [] });
+            }
+            renderBoards();
+            renderCurrentBoard();
+            showBoardList(); // GEÄNDERT: Sicherstellen, dass die Liste zuerst angezeigt wird
+        }
+
+        function createNewBoard() {
+            boards.push({ name: 'Neues Board', images: [] });
+            currentBoardIndex = boards.length - 1;
+            renderBoards();
+            renderCurrentBoard();
+            saveToStorage(); // Automatisches Speichern
+            showBoardContent(); // GEÄNDERT: Zur neuen Board-Ansicht wechseln
+        }
+
+        function renderBoards() {
+            const list = document.getElementById('boardsList');
+            list.innerHTML = '';
+            boards.forEach((board, index) => {
+                const card = document.createElement('div');
+                card.className = 'board-card' + (index === currentBoardIndex ? ' active' : '');
+                card.innerHTML = `
+                    <button class="board-delete" onclick="deleteBoard(${index}); event.stopPropagation();">×</button>
+                    <h3>${board.name}</h3>
+                    <p>${board.images.length} Bilder</p>
+                `;
+                card.onclick = () => {
+                    currentBoardIndex = index;
+                    renderBoards();
+                    renderCurrentBoard();
+                    showBoardContent(); // GEÄNDERT: Zur Board-Ansicht wechseln
+                };
+                list.appendChild(card);
+            });
+        }
+
+        function renderCurrentBoard() {
+            // Schutz vor undefiniertem Board, falls das letzte gelöscht wurde
+            if (!boards[currentBoardIndex]) {
+                currentBoardIndex = 0; // Auf erstes Board zurückfallen
+            }
+            // Wenn immer noch kein Board da ist (leeres Array), abbrechen
+            if (!boards[currentBoardIndex]) {
+                // document.getElementById('boardView').style.display = 'none'; // Ansicht ausblenden (wird jetzt über CSS-Klasse gesteuert)
+                showBoardList(); // Zeige Liste, wenn kein Board da ist
+                return;
+            }
+
+            const board = boards[currentBoardIndex];
+            
+            document.getElementById('boardNameInput').value = board.name;
+            const grid = document.getElementById('imagesGrid');
+            grid.innerHTML = '';
+
+            const addBtn = document.createElement('div');
+            addBtn.className = 'add-image-btn';
+            addBtn.innerHTML = '+<span>Neues Bild</span>';
+            addBtn.onclick = openAddImageModal;
+            grid.appendChild(addBtn);
+
+            board.images.forEach((img, index) => {
+                const item = document.createElement('div');
+                item.className = 'image-item';
+                item.innerHTML = `
+                    <button class="image-delete" onclick="deleteImage(${index}); event.stopPropagation();">×</button>
+                    <div class="image-placeholder">
+                        ${img.data ? `<img src="${img.data}" alt="${img.name}">` : '🖼️'}
+                    </div>
+                    <div class="image-name">${img.name}</div>
+                `;
+                item.onclick = () => openFullscreen(img);
+                grid.appendChild(item);
+            });
+        }
+
+        function updateBoardName() {
+            if (boards[currentBoardIndex]) {
+                boards[currentBoardIndex].name = document.getElementById('boardNameInput').value;
+                renderBoards();
+                saveToStorage(); // Automatisches Speichern
+            }
+        }
+
+        function openAddImageModal() {
+            document.getElementById('imageModal').classList.add('active');
+            document.getElementById('imageName').value = '';
+            document.getElementById('imageFile').value = '';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        function addImage() {
+            const name = document.getElementById('imageName').value || 'Unbenannt';
+            const file = document.getElementById('imageFile').files[0];
+            
+            if (!boards[currentBoardIndex]) return; // Absicherung
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    boards[currentBoardIndex].images.push({
+                        name: name,
+                        data: e.target.result
+                    });
+                    renderCurrentBoard();
+                    renderBoards(); // Board-Karten-Zähler aktualisieren
+                    closeModal();
+                    saveToStorage(); // Automatisches Speichern
+                };
+                reader.readAsDataURL(file);
+            } else {
+                boards[currentBoardIndex].images.push({
+                    name: name,
+                    data: null
+                });
+                renderCurrentBoard();
+                renderBoards(); // Board-Karten-Zähler aktualisieren
+                closeModal();
+                saveToStorage(); // Automatisches Speichern
+            }
+        }
+
+        function deleteImage(index) {
+            // Ersetzt confirm()
+            showConfirm('Bild löschen?', 'Möchten Sie dieses Bild wirklich löschen?', (result) => {
+                if (result) {
+                    if (boards[currentBoardIndex]) {
+                        boards[currentBoardIndex].images.splice(index, 1);
+                        renderCurrentBoard();
+                        renderBoards(); // Board-Karten-Zähler aktualisieren
+                        saveToStorage(); // Automatisches Speichern
+                    }
+                }
+            });
+        }
+
+        function deleteBoard(index) {
+            // Ersetzt confirm()
+            showConfirm('Board löschen?', 'Möchten Sie dieses Board wirklich löschen?', (result) => {
+                if (result) {
+                    boards.splice(index, 1);
+                    if (boards.length === 0) {
+                        boards.push({ name: 'Neues Board', images: [] });
+                    }
+                    currentBoardIndex = Math.min(Math.max(0, index - 1), boards.length - 1);
+                    renderBoards();
+                    renderCurrentBoard(); // Muss gerendert werden, auch wenn es versteckt ist
+                    saveToStorage(); // Automatisches Speichern
+                    showBoardList(); // GEÄNDERT: Zurück zur Liste
+                }
+            });
+        }
+
+        function openFullscreen(img) {
+            if (img.data) {
+                document.getElementById('fullscreenImage').src = img.data;
+                document.getElementById('fullscreenName').textContent = img.name;
+                document.getElementById('fullscreenView').classList.add('active');
+            }
+        }
+
+        function closeFullscreen() {
+            document.getElementById('fullscreenView').classList.remove('active');
+        }
+
+        async function exportAsZip() {
+            const zip = new JSZip();
+
+            boards.forEach((board, boardIndex) => {
+                const boardFolder = zip.folder(board.name);
+                
+                board.images.forEach((img, imgIndex) => {
+                    if (img.data) {
+                        const base64Data = img.data.split(',')[1];
+                        const ext = img.data.split(';')[0].split('/')[1];
+                        boardFolder.file(`${img.name}.${ext}`, base64Data, {base64: true});
+                    }
+                });
+
+                boardFolder.file('board-info.json', JSON.stringify({
+                    name: board.name,
+                    images: board.images.map(img => ({ name: img.name }))
+                }));
+            });
+
+            const content = await zip.generateAsync({type: 'blob'});
+            const url = URL.createObjectURL(content);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'imageboards.zip';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // --- Neue Import-Funktionen ---
+        function triggerImport() {
+            document.getElementById('importFile').click();
+        }
+
+        async function importFromZip() {
+            const file = document.getElementById('importFile').files[0];
+            if (!file) return;
+            
+            // Input zurücksetzen, damit dieselbe Datei erneut ausgewählt werden kann
+            document.getElementById('importFile').value = '';
+
+            showConfirm('Importieren & Ersetzen?',
+                'Möchten Sie die aktuellen Boards durch den Import ersetzen? (Abbrechen = Nicht importieren)',
+                async (result) => {
+                    if (!result) return; // User canceled
+
+                    try {
+                        const zipData = await file.arrayBuffer();
+                        const zip = await JSZip.loadAsync(zipData);
+                        const newBoards = [];
+                        const boardFolders = [];
+
+                        // Alle Root-Level-Ordner finden
+                        zip.forEach((relativePath, zipEntry) => {
+                            if (zipEntry.dir) {
+                                const pathParts = relativePath.split('/').filter(p => p.length > 0);
+                                if (pathParts.length === 1) {
+                                    boardFolders.push(zipEntry.name);
+                                }
+                            }
+                        });
+
+                        if (boardFolders.length === 0) {
+                            showAlert('Importfehler', 'Keine gültigen Board-Ordner in der ZIP-Datei gefunden.');
+                            return;
+                        }
+
+                        for (const folderName of boardFolders) {
+                            const boardFolder = zip.folder(folderName);
+                            const boardName = folderName.slice(0, -1); // Letztes '/' entfernen
+                            const newBoard = { name: boardName, images: [] };
+
+                            const imagePromises = [];
+                            boardFolder.forEach((relativePath, file) => {
+                                // board-info.json ignorieren, nur Bilddateien verarbeiten
+                                if (!file.dir && relativePath !== 'board-info.json') {
+                                    imagePromises.push(processImageFile(file, relativePath));
+                                }
+                            });
+
+                            newBoard.images = await Promise.all(imagePromises);
+                            newBoards.push(newBoard);
+                        }
+                        
+                        if (newBoards.length === 0) {
+                             newBoards.push({ name: 'Neues Board', images: [] });
+                        }
+
+                        boards = newBoards;
+                        currentBoardIndex = 0;
+                        renderBoards();
+                        renderCurrentBoard();
+                        saveToStorage(); // Neu importierte Daten speichern
+                        showBoardList(); // GEÄNDERT: Nach Import die Liste anzeigen
+                        showAlert('Import erfolgreich!', 'Ihre Boards wurden erfolgreich importiert.');
+
+                    } catch (error) {
+                        console.error('Fehler beim Importieren der ZIP-Datei:', error);
+                        showAlert('Importfehler', 'Fehler beim Importieren der ZIP-Datei. Siehe Konsole für Details.');
+                    }
+                }
+            );
+        }
+
+        async function processImageFile(file, path) {
+            const base64Data = await file.async("base64");
+            const nameParts = path.split('.');
+            const ext = nameParts.pop().toLowerCase();
+            const name = nameParts.join('.');
+            
+            let mimeType = 'image/jpeg'; // default
+            if (ext === 'png') mimeType = 'image/png';
+            else if (ext === 'gif') mimeType = 'image/gif';
+            else if (ext === 'webp') mimeType = 'image/webp';
+            // ggf. weitere Mime-Typen hinzufügen
+
+            const dataUrl = `data:${mimeType};base64,${base64Data}`;
+            return { name: name, data: dataUrl };
+        }
+        // --- Ende Import-Funktionen ---
+
+
+        // GEÄNDERT: Verwendet localStorage statt Cookies
+        function saveToStorage() {
+            // Speichert automatisch in localStorage
+            try {
+                localStorage.setItem('imageboards', JSON.stringify(boards));
+                // Optional: Feedback geben, dass gespeichert wurde (kann aber bei Auto-Speichern stören)
+                // console.log("In localStorage gespeichert.");
+            } catch (e) {
+                console.error("Fehler beim Speichern im localStorage:", e);
+                showAlert("Speicherfehler", "Fehler beim Speichern. Die Daten sind möglicherweise zu groß oder der Speicher ist voll.");
+            }
+        }
+
+        // GEÄNDERT: Verwendet localStorage statt Cookies
+        function clearAll() {
+            // Ersetzt confirm()
+            showConfirm('Alles löschen?', 'Möchten Sie wirklich alle Boards löschen? Dies kann nicht rückgängig gemacht werden.', (result) => {
+                if (result) {
+                    boards = [{ name: 'Neues Board', images: [] }];
+                    currentBoardIndex = 0;
+                    renderBoards();
+                    renderCurrentBoard();
+                    localStorage.removeItem('imageboards'); // Cookie löschen
+                    showBoardList(); // GEÄNDERT: Zurück zur Liste
+                }
+            });
+        }
+
+        // --- Cookie Hilfsfunktionen (ENTFERNT) ---
+
+        init();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulsierende Vorschau mit Ladebalken</title>
+    <!-- Tailwind CSS CDN für einfaches Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Allgemeine Styling-Anpassungen */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dunkler Hintergrund */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        /* 1. Keyframes für das Pulsieren (Größer/Kleiner werden) definieren */
+        @keyframes pulse-scale {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(79, 70, 229, 0.5); /* Leichter Schatten */
+            }
+            50% {
+                transform: scale(1.05); /* 5% größer */
+                box-shadow: 0 0 40px rgba(79, 70, 229, 0.9); /* Starker Schatten beim Pulsieren */
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+            }
+        }
+        
+        /* 3. Keyframes für die Rotation definieren (optional) */
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 2. Keyframes für den Ladebalken-Fortschritt */
+        /* Die Breite wird von 0% auf 100% animiert */
+        @keyframes loading-progress {
+            from {
+                width: 0%;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        /* Basis-Klasse für das Bild */
+        .loading-image {
+            /* Puls-Animation läuft immer */
+            animation: pulse-scale 2s ease-in-out infinite; 
+            margin: 0 auto;
+            /* Zentrierung für den 3D-Effekt (Scale/Rotate) */
+            will-change: transform;
+        }
+        
+        /* Stil für den inneren Fortschritt des Ladebalkens */
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #3b82f6; /* Blau */
+            border-radius: 9999px; /* Volle Abrundung */
+            /* Die Dauer der Animation wird über JS gesetzt */
+            animation: loading-progress var(--loading-duration, 5s) linear forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ALLE TEXTELEMENTE WURDEN ENTFERNT -->
+
+    <!-- Container für das pulsierende, kreisförmige Bild -->
+    <!-- Die Klasse wird in JS dynamisch um 'rotate' erweitert -->
+    <div id="imageContainer" class="loading-image w-48 h-48 sm:w-64 sm:h-64 overflow-hidden rounded-full border-4 border-indigo-500 shadow-xl mx-auto mb-10">
+        <!-- Das Bild selbst -->
+        <img 
+            id="targetImage"
+            src="https://wearefloridevs.github.io/logo.jpeg" 
+            alt="Pulsierendes Kreisbild"
+            class="w-full h-full object-cover"
+            onerror="this.onerror=null; this.src='https://placehold.co/600x600/1e293b/ffffff?text=Loading';"
+        >
+    </div>
+
+    <!-- Ladebalken-Container -->
+    <div class="w-80 h-3 bg-gray-700 rounded-full overflow-hidden shadow-inner">
+        <!-- Der eigentliche Fortschrittsbalken -->
+        <div id="progressBar" class="progress-bar-fill"></div>
+    </div>
+    
+    <!-- COUNTDOWN-TEXT WURDE ENTFERNT -->
+
+    <script>
+        // === KONFIGURATION: HIER KÖNNEN SIE DIE EINSTELLUNGEN ÄNDERN ===
+
+        // 1. Die Ziel-URL für die Weiterleitung (MUSS mit 'http://' oder 'https://' beginnen)
+        const redirectURL = "main.html"; 
+
+        // 2. Die Verzögerung in Sekunden, bevor die Weiterleitung erfolgt (für den Ladebalken)
+        let totalDelayInSeconds = 5; 
+        
+        // NEU: 3. Rotationsgeschwindigkeit des Logos (in Sekunden). 
+        // Kleinere Zahl = schneller. 0 deaktiviert die Rotation.
+        const rotationSpeedSeconds = 0; 
+
+        // ================================================================
+
+        let remainingDelay = totalDelayInSeconds;
+        let countdownTimer;
+
+        // Funktion zur Aktualisierung des Countdowns
+        function updateCountdown() {
+            if (remainingDelay <= 0) {
+                clearInterval(countdownTimer);
+                
+                // Kurze Verzögerung für den Ladebalken, um 100% zu zeigen
+                setTimeout(() => {
+                    // Weiterleitung durchführen
+                    window.location.href = redirectURL;
+                }, 500); 
+
+                return;
+            }
+
+            remainingDelay--;
+        }
+
+        // Wird ausgeführt, sobald die Seite geladen ist
+        window.onload = function() {
+            const progressBar = document.getElementById('progressBar');
+            const imageContainer = document.getElementById('imageContainer');
+
+            // 1. Ladebalken-Dauer setzen
+            if (progressBar) {
+                progressBar.style.setProperty('--loading-duration', `${totalDelayInSeconds}s`);
+            }
+            
+            // 2. Rotation aktivieren/deaktivieren und Geschwindigkeit setzen
+            if (rotationSpeedSeconds > 0 && imageContainer) {
+                // Erstellt die CSS-Regel für die Rotation dynamisch
+                const styleSheet = document.styleSheets[0];
+                const rotationRule = `.loading-image.rotating { 
+                    animation: pulse-scale 2s ease-in-out infinite, 
+                               rotate ${rotationSpeedSeconds}s linear infinite; 
+                }`;
+                styleSheet.insertRule(rotationRule, styleSheet.cssRules.length);
+                
+                // Fügt die Klasse hinzu, um die Rotation zu starten
+                imageContainer.classList.add('rotating');
+            }
+
+            // 3. Countdown-Timer starten
+            // Führt die updateCountdown Funktion nach der ersten Sekunde jede Sekunde aus
+            countdownTimer = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Startet den Countdown sofort, damit die erste Sekunde gezählt wird
+        };
+
+    </script>
+
+</body>
+</html>
