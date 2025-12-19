@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MillaScript Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+            padding: 40px 0;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #00d4ff;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            color: #b8b8b8;
+            font-size: 1.2em;
+        }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .nav a {
+            color: #00d4ff;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .nav a:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        section {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 2px solid #533483;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #00d4ff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .command-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .command-name {
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .syntax {
+            color: #51cf66;
+            margin: 10px 0;
+        }
+
+        .description {
+            color: #b8b8b8;
+            margin-top: 10px;
+        }
+
+        .example {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .example h4 {
+            color: #ffd43b;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #51cf66;
+            font-family: 'Courier New', monospace;
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .note {
+            background: rgba(255, 214, 59, 0.1);
+            border-left: 4px solid #ffd43b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .note strong {
+            color: #ffd43b;
+        }
+
+        .tip {
+            background: rgba(81, 207, 102, 0.1);
+            border-left: 4px solid #51cf66;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .tip strong {
+            color: #51cf66;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #b8b8b8;
+            margin-top: 50px;
+        }
+
+        .highlight-keyword {
+            color: #ff6b6b;
+        }
+
+        .highlight-string {
+            color: #51cf66;
+        }
+
+        .highlight-number {
+            color: #4dabf7;
+        }
+
+        .highlight-variable {
+            color: #ffd43b;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .nav ul {
+                flex-direction: column;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📘 MillaScript</h1>
+            <p class="subtitle">Offizielle Dokumentation für die MillaScript Programmiersprache</p>
+            <p class="subtitle">Version 1.0 | Milla OS 0.53</p>
+        </header>
+
+        <nav class="nav">
+            <ul>
+                <li><a href="#intro">Einführung</a></li>
+                <li><a href="#getting-started">Quick Start</a></li>
+                <li><a href="#commands">Befehle</a></li>
+                <li><a href="#variables">Variablen</a></li>
+                <li><a href="#control">Kontrollstrukturen</a></li>
+                <li><a href="#examples">Beispiele</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>🚀 Einführung</h2>
+            <p>MillaScript ist eine einfache, aber leistungsfähige Programmiersprache, die speziell für Milla OS entwickelt wurde. Sie ist ideal für Anfänger und ermöglicht es, schnell interaktive Programme zu erstellen.</p>
+            
+            <h3>Hauptmerkmale</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>✅ Einfache, verständliche Syntax</li>
+                <li>✅ 26 Variablen (A-Z)</li>
+                <li>✅ Arithmetische Operationen</li>
+                <li>✅ Bedingte Sprünge und Schleifen</li>
+                <li>✅ Interaktive Benutzereingabe</li>
+                <li>✅ Integrierter Code-Editor mit Syntax-Highlighting</li>
+            </ul>
+        </section>
+
+        <section id="getting-started">
+            <h2>🎯 Quick Start</h2>
+            
+            <h3>1. Code-Editor öffnen</h3>
+            <p>Im Hauptmenü von Milla OS: <strong>3. Code Editor</strong> auswählen</p>
+            
+            <h3>2. Dein erstes Programm</h3>
+            <div class="example">
+                <h4>Hello World</h4>
+                <pre><code><span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Hello, World!"</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Willkommen zu MillaScript!"</span></code></pre>
+            </div>
+
+            <h3>3. Programm speichern und ausführen</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>F1</strong> - Speichern</li>
+                <li><strong>F2</strong> - Ausführen</li>
+                <li><strong>F3</strong> - Hilfe anzeigen</li>
+                <li><strong>ESC</strong> - Editor verlassen</li>
+            </ul>
+
+            <div class="tip">
+                <strong>💡 Tipp:</strong> Alle MillaScript-Programme sollten die Endung <code>.MSC</code> haben!
+            </div>
+        </section>
+
+        <section id="commands">
+            <h2>📋 Befehlsreferenz</h2>
+
+            <div class="command-box">
+                <div class="command-name">PRINT</div>
+                <div class="syntax">Syntax: <code>PRINT "Text"</code> oder <code>PRINT Variable</code></div>
+                <div class="description">Gibt Text oder den Wert einer Variable auf dem Bildschirm aus.</div>
+            </div>
+
+            <div class="example">
+                <h4>Beispiele</h4>
+                <pre><code><span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Hallo!"</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-number">42</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">A</span></code></pre>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">SET</div>
+                <div class="syntax">Syntax: <code>SET Variable Wert</code></div>
+                <div class="description">Weist einer Variable einen Wert zu.</div>
+            </div>
+
+            <div class="example">
+                <h4>Beispiele</h4>
+                <pre><code><span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-number">10</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">B</span> <span class="highlight-number">-5</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">C</span> <span class="highlight-variable">A</span></code></pre>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">ADD</div>
+                <div class="syntax">Syntax: <code>ADD Variable Wert</code></div>
+                <div class="description">Addiert einen Wert zu einer Variable.</div>
+            </div>
+
+            <div class="example">
+                <h4>Beispiele</h4>
+                <pre><code><span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-number">5</span>
+<span class="highlight-keyword">ADD</span> <span class="highlight-variable">A</span> <span class="highlight-number">3</span>  <span style="color: #888;">// A ist jetzt 8</span>
+<span class="highlight-keyword">ADD</span> <span class="highlight-variable">A</span> <span class="highlight-variable">B</span>  <span style="color: #888;">// Addiert Wert von B</span></code></pre>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">SUB</div>
+                <div class="syntax">Syntax: <code>SUB Variable Wert</code></div>
+                <div class="description">Subtrahiert einen Wert von einer Variable.</div>
+            </div>
+
+            <div class="example">
+                <h4>Beispiele</h4>
+                <pre><code><span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-number">10</span>
+<span class="highlight-keyword">SUB</span> <span class="highlight-variable">A</span> <span class="highlight-number">3</span>  <span style="color: #888;">// A ist jetzt 7</span></code></pre>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">INPUT</div>
+                <div class="syntax">Syntax: <code>INPUT Variable</code></div>
+                <div class="description">Fordert den Benutzer zur Eingabe einer Zahl auf und speichert sie in der Variable.</div>
+            </div>
+
+            <div class="example">
+                <h4>Beispiel</h4>
+                <pre><code><span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Gib eine Zahl ein:"</span>
+<span class="highlight-keyword">INPUT</span> <span class="highlight-variable">A</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Du hast eingegeben:"</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">A</span></code></pre>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">DELAY</div>
+                <div class="syntax">Syntax: <code>DELAY Zyklen</code></div>
+                <div class="description">Pausiert die Programmausführung für die angegebene Anzahl an Zyklen.</div>
+            </div>
+
+            <div class="example">
+                <h4>Beispiel</h4>
+                <pre><code><span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Warte..."</span>
+<span class="highlight-keyword">DELAY</span> <span class="highlight-number">100</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Fertig!"</span></code></pre>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">CLS</div>
+                <div class="syntax">Syntax: <code>CLS</code></div>
+                <div class="description">Löscht den Bildschirm.</div>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">GOTO</div>
+                <div class="syntax">Syntax: <code>GOTO Label</code></div>
+                <div class="description">Springt zur angegebenen Label-Position im Programm.</div>
+            </div>
+
+            <div class="example">
+                <h4>Beispiel</h4>
+                <pre><code><span class="highlight-keyword">GOTO</span> <span class="highlight-variable">ende</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Dies wird übersprungen"</span>
+<span class="highlight-variable">ende:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Programmende"</span></code></pre>
+            </div>
+
+            <div class="command-box">
+                <div class="command-name">IF</div>
+                <div class="syntax">Syntax: <code>IF Wert1 Operator Wert2 GOTO Label</code></div>
+                <div class="description">Springt zum Label, wenn die Bedingung erfüllt ist.</div>
+            </div>
+
+            <h3>Verfügbare Operatoren</h3>
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Bedeutung</th>
+                    <th>Beispiel</th>
+                </tr>
+                <tr>
+                    <td><code>==</code></td>
+                    <td>Gleich</td>
+                    <td><code>IF A == 5 GOTO label</code></td>
+                </tr>
+                <tr>
+                    <td><code>!=</code></td>
+                    <td>Ungleich</td>
+                    <td><code>IF A != 0 GOTO label</code></td>
+                </tr>
+                <tr>
+                    <td><code>&gt;</code></td>
+                    <td>Größer als</td>
+                    <td><code>IF A &gt; 10 GOTO label</code></td>
+                </tr>
+                <tr>
+                    <td><code>&lt;</code></td>
+                    <td>Kleiner als</td>
+                    <td><code>IF A &lt; 5 GOTO label</code></td>
+                </tr>
+                <tr>
+                    <td><code>&gt;=</code></td>
+                    <td>Größer oder gleich</td>
+                    <td><code>IF A &gt;= 10 GOTO label</code></td>
+                </tr>
+                <tr>
+                    <td><code>&lt;=</code></td>
+                    <td>Kleiner oder gleich</td>
+                    <td><code>IF A &lt;= 5 GOTO label</code></td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="variables">
+            <h2>📊 Variablen</h2>
+            <p>MillaScript bietet 26 globale Variablen, benannt von <code>A</code> bis <code>Z</code>.</p>
+
+            <h3>Eigenschaften</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Alle Variablen speichern <strong>Integer-Werte</strong> (ganze Zahlen)</li>
+                <li>Startwert aller Variablen ist <strong>0</strong></li>
+                <li>Unterstützt negative Zahlen</li>
+                <li>Keine Deklaration nötig</li>
+            </ul>
+
+            <div class="example">
+                <h4>Variablen verwenden</h4>
+                <pre><code><span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-number">10</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">B</span> <span class="highlight-number">20</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">C</span> <span class="highlight-variable">A</span>
+<span class="highlight-keyword">ADD</span> <span class="highlight-variable">C</span> <span class="highlight-variable">B</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">C</span>  <span style="color: #888;">// Gibt 30 aus</span></code></pre>
+            </div>
+
+            <div class="note">
+                <strong>⚠️ Hinweis:</strong> Variablen sind case-sensitive! <code>A</code> und <code>a</code> sind unterschiedliche Variablen (aber nur Großbuchstaben werden unterstützt).
+            </div>
+        </section>
+
+        <section id="control">
+            <h2>🔄 Kontrollstrukturen</h2>
+
+            <h3>Labels</h3>
+            <p>Labels markieren Positionen im Code, zu denen gesprungen werden kann.</p>
+            <div class="example">
+                <pre><code><span class="highlight-variable">start:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Schleife"</span>
+<span class="highlight-keyword">GOTO</span> <span class="highlight-variable">start</span></code></pre>
+            </div>
+
+            <h3>Schleifen</h3>
+            <p>Schleifen werden mit Labels und bedingten Sprüngen erstellt.</p>
+            
+            <div class="example">
+                <h4>Zählschleife (For-Loop)</h4>
+                <pre><code><span class="highlight-keyword">SET</span> <span class="highlight-variable">I</span> <span class="highlight-number">0</span>
+<span class="highlight-variable">loop:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">I</span>
+<span class="highlight-keyword">ADD</span> <span class="highlight-variable">I</span> <span class="highlight-number">1</span>
+<span class="highlight-keyword">IF</span> <span class="highlight-variable">I</span> &lt; <span class="highlight-number">10</span> <span class="highlight-keyword">GOTO</span> <span class="highlight-variable">loop</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Schleife beendet"</span></code></pre>
+            </div>
+
+            <div class="example">
+                <h4>While-Loop</h4>
+                <pre><code><span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-number">100</span>
+<span class="highlight-variable">while:</span>
+<span class="highlight-keyword">IF</span> <span class="highlight-variable">A</span> &lt;= <span class="highlight-number">0</span> <span class="highlight-keyword">GOTO</span> <span class="highlight-variable">ende</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">A</span>
+<span class="highlight-keyword">SUB</span> <span class="highlight-variable">A</span> <span class="highlight-number">10</span>
+<span class="highlight-keyword">GOTO</span> <span class="highlight-variable">while</span>
+<span class="highlight-variable">ende:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Fertig!"</span></code></pre>
+            </div>
+
+            <h3>Bedingte Ausführung</h3>
+            <div class="example">
+                <h4>If-Then-Else simulieren</h4>
+                <pre><code><span class="highlight-keyword">INPUT</span> <span class="highlight-variable">A</span>
+<span class="highlight-keyword">IF</span> <span class="highlight-variable">A</span> &gt; <span class="highlight-number">10</span> <span class="highlight-keyword">GOTO</span> <span class="highlight-variable">gross</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Zahl ist klein oder gleich 10"</span>
+<span class="highlight-keyword">GOTO</span> <span class="highlight-variable">ende</span>
+<span class="highlight-variable">gross:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Zahl ist groesser als 10"</span>
+<span class="highlight-variable">ende:</span></code></pre>
+            </div>
+        </section>
+
+        <section id="examples">
+            <h2>💡 Beispielprogramme</h2>
+
+            <div class="example">
+                <h4>1. Zahlenraten-Spiel</h4>
+                <pre><code><span class="highlight-keyword">SET</span> <span class="highlight-variable">S</span> <span class="highlight-number">42</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">V</span> <span class="highlight-number">0</span>
+<span class="highlight-variable">start:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Rate die Zahl (0-100):"</span>
+<span class="highlight-keyword">INPUT</span> <span class="highlight-variable">G</span>
+<span class="highlight-keyword">ADD</span> <span class="highlight-variable">V</span> <span class="highlight-number">1</span>
+<span class="highlight-keyword">IF</span> <span class="highlight-variable">G</span> == <span class="highlight-variable">S</span> <span class="highlight-keyword">GOTO</span> <span class="highlight-variable">gewonnen</span>
+<span class="highlight-keyword">IF</span> <span class="highlight-variable">G</span> &gt; <span class="highlight-variable">S</span> <span class="highlight-keyword">GOTO</span> <span class="highlight-variable">zuGross</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Zu klein!"</span>
+<span class="highlight-keyword">GOTO</span> <span class="highlight-variable">start</span>
+<span class="highlight-variable">zuGross:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Zu gross!"</span>
+<span class="highlight-keyword">GOTO</span> <span class="highlight-variable">start</span>
+<span class="highlight-variable">gewonnen:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Richtig! Versuche:"</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">V</span></code></pre>
+            </div>
+
+            <div class="example">
+                <h4>2. Countdown-Timer</h4>
+                <pre><code><span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Countdown von:"</span>
+<span class="highlight-keyword">INPUT</span> <span class="highlight-variable">N</span>
+<span class="highlight-keyword">CLS</span>
+<span class="highlight-variable">loop:</span>
+<span class="highlight-keyword">IF</span> <span class="highlight-variable">N</span> &lt; <span class="highlight-number">0</span> <span class="highlight-keyword">GOTO</span> <span class="highlight-variable">ende</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">N</span>
+<span class="highlight-keyword">DELAY</span> <span class="highlight-number">50</span>
+<span class="highlight-keyword">SUB</span> <span class="highlight-variable">N</span> <span class="highlight-number">1</span>
+<span class="highlight-keyword">GOTO</span> <span class="highlight-variable">loop</span>
+<span class="highlight-variable">ende:</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Start!"</span></code></pre>
+            </div>
+
+            <div class="example">
+                <h4>3. Fibonacci-Zahlen</h4>
+                <pre><code><span class="highlight-keyword">PRINT</span> <span class="highlight-string">"Wie viele Fibonacci-Zahlen?"</span>
+<span class="highlight-keyword">INPUT</span> <span class="highlight-variable">N</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-number">0</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">B</span> <span class="highlight-number">1</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">I</span> <span class="highlight-number">0</span>
+<span class="highlight-variable">loop:</span>
+<span class="highlight-keyword">IF</span> <span class="highlight-variable">I</span> &gt;= <span class="highlight-variable">N</span> <span class="highlight-keyword">GOTO</span> <span class="highlight-variable">ende</span>
+<span class="highlight-keyword">PRINT</span> <span class="highlight-variable">A</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">C</span> <span class="highlight-variable">A</span>
+<span class="highlight-keyword">ADD</span> <span class="highlight-variable">C</span> <span class="highlight-variable">B</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">A</span> <span class="highlight-variable">B</span>
+<span class="highlight-keyword">SET</span> <span class="highlight-variable">B</span> <span class="highlight-variable">C</span>
+<span class="highlight-keyword">ADD</span> <span class="highlight-variable">I</span> <span class="highlight-number">1</span>
+<span class="highlight-keyword">GOTO</span> <span class="highlight-variable">loop</span>
+<span class="highlight-variable">ende:</span></code></pre>
+            </div>
+
+            <div class="example">
