@@ -3,210 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Vollrand & Trennlinie Tool</title>
+    <title>PDF Rand Generator (Querformat)</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .preview-container {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            background: #fff;
-            min-height: 400px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 { margin-top: 0; color: #333; }
+        p { color: #666; }
+        
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        
+        input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        button {
+            border: 2px solid #007bff;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        button:hover { background-color: #0056b3; border-color: #0056b3; }
+
+        iframe {
+            margin-top: 30px;
+            width: 100%;
+            height: 500px; /* Etwas flacher für Querformat-Ansicht */
+            border: 1px solid #ccc;
+            display: none;
+        }
+
+        .status { margin-top: 10px; font-weight: bold; color: #007bff; min-height: 24px;}
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen p-4 md:p-8">
-    <div class="max-w-4xl mx-auto">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">PDF Rand-Konfigurator</h1>
-            <p class="text-gray-600 mt-2">Rundum-Rand: 31mm mit Trennlinie rechts nach 16mm</p>
-        </header>
+<body>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="md:col-span-1 space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h2 class="text-lg font-semibold mb-4 text-gray-700">1. PDF Hochladen</h2>
-                    <label class="block w-full flex flex-col items-center px-4 py-6 bg-blue-50 text-blue-700 rounded-lg shadow-sm tracking-wide border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors">
-                        <svg class="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
-                        </svg>
-                        <span class="mt-2 text-sm leading-normal font-medium text-center">PDF auswählen</span>
-                        <input type='file' id="pdfInput" class="hidden" accept="application/pdf" />
-                    </label>
-                    <p id="fileName" class="mt-2 text-xs text-center text-gray-500 truncate"></p>
-                </div>
+    <div class="container">
+        <h1>PDF Rand (Querformat)</h1>
+        <p>
+            Format: A4 Quer (Landscape)<br>
+            Rand: 31mm | Trennlinie: 16mm
+        </p>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h2 class="text-lg font-semibold mb-4 text-gray-700">2. Optionen</h2>
-                    <div class="space-y-4">
-                        <button id="processBtn" disabled class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all">
-                            Dokument erstellen
-                        </button>
-                        <button id="downloadBtn" style="display:none" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition-all">
-                            PDF Herunterladen
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
-                    <h3 class="text-sm font-bold text-indigo-800 uppercase tracking-wider mb-2">Spezifikationen:</h3>
-                    <ul class="text-sm text-indigo-700 space-y-1">
-                        <li>• Format: A4 (zentriert)</li>
-                        <li>• Rand (alle Seiten): 31 mm</li>
-                        <li>• Trennlinie rechts: 16 mm im Rand</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="md:col-span-2">
-                <div class="preview-container rounded-xl overflow-hidden border border-gray-200 flex items-center justify-center relative">
-                    <div id="loadingOverlay" class="hidden absolute inset-0 bg-white bg-opacity-80 z-10 flex flex-col items-center justify-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                        <p class="mt-4 text-gray-700 font-medium">Layout wird berechnet...</p>
-                    </div>
-                    
-                    <div id="noPreview" class="text-center p-12">
-                        <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <p class="mt-4 text-gray-500">Wähle eine Datei aus.</p>
-                    </div>
-
-                    <iframe id="pdfPreview" class="w-full h-[650px] hidden" frameborder="0"></iframe>
-                </div>
-            </div>
+        <div class="upload-btn-wrapper">
+            <button class="btn">PDF Datei auswählen</button>
+            <input type="file" id="fileInput" accept="application/pdf" />
         </div>
+        
+        <div class="status" id="statusText"></div>
     </div>
+
+    <iframe id="pdfPreview"></iframe>
 
     <script>
         const { PDFDocument, rgb } = PDFLib;
-        
-        const pdfInput = document.getElementById('pdfInput');
-        const processBtn = document.getElementById('processBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const fileNameDisplay = document.getElementById('fileName');
-        const pdfPreview = document.getElementById('pdfPreview');
-        const noPreview = document.getElementById('noPreview');
-        const loadingOverlay = document.getElementById('loadingOverlay');
 
-        let originalPdfBytes = null;
-        let modifiedPdfBytes = null;
-
-        pdfInput.addEventListener('change', async (e) => {
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
             const file = e.target.files[0];
-            if (file) {
-                fileNameDisplay.textContent = file.name;
-                const arrayBuffer = await file.arrayBuffer();
-                originalPdfBytes = new Uint8Array(arrayBuffer);
-                processBtn.disabled = false;
-                downloadBtn.style.display = 'none';
-            }
-        });
+            if (!file) return;
 
-        processBtn.addEventListener('click', async () => {
-            if (!originalPdfBytes) return;
-            loadingOverlay.classList.remove('hidden');
-            
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = "Verarbeite PDF (Querformat)...";
+
             try {
-                const originalPdf = await PDFDocument.load(originalPdfBytes);
-                const modifiedPdf = await PDFDocument.create();
+                const arrayBuffer = await file.arrayBuffer();
+                const originalPdf = await PDFDocument.load(arrayBuffer);
+                const newPdf = await PDFDocument.create();
+
+                const mm = 2.83465;
                 
-                const mmToPt = 2.83465;
-                const a4Width = 210 * mmToPt;
-                const a4Height = 297 * mmToPt;
-                const margin = 31 * mmToPt;
-                const lineOffset = 16 * mmToPt;
+                // ÄNDERUNG: A4 Maße getauscht für Querformat
+                const A4_WIDTH = 297 * mm;  // Breite ist jetzt die lange Seite
+                const A4_HEIGHT = 210 * mm; // Höhe ist jetzt die kurze Seite
+                
+                const MARGIN_TOTAL = 31 * mm; 
+                const LINE_POS = 16 * mm;    
+                
+                const contentMaxWidth = A4_WIDTH - (2 * MARGIN_TOTAL);
+                const contentMaxHeight = A4_HEIGHT - (2 * MARGIN_TOTAL);
 
                 const pages = originalPdf.getPages();
+                const embeddedPages = await newPdf.embedPages(pages);
 
-                for (let i = 0; i < pages.length; i++) {
-                    const newPage = modifiedPdf.addPage([a4Width, a4Height]);
-                    const embeddedPage = await modifiedPdf.embedPage(pages[i]);
-                    
-                    // Verfügbare Breite und Höhe im inneren Rahmen
-                    const availableWidth = a4Width - (2 * margin);
-                    const availableHeight = a4Height - (2 * margin);
-                    
-                    // Beste Skalierung berechnen (Fit-to-Box)
-                    const scaleX = availableWidth / embeddedPage.width;
-                    const scaleY = availableHeight / embeddedPage.height;
+                for (let i = 0; i < embeddedPages.length; i++) {
+                    const embeddedPage = embeddedPages[i];
+                    const originalDims = embeddedPage.scale(1);
+
+                    const page = newPdf.addPage([A4_WIDTH, A4_HEIGHT]);
+
+                    // Rechteck/Linie zeichnen (passt sich an Querformat an)
+                    page.drawRectangle({
+                        x: LINE_POS,
+                        y: LINE_POS,
+                        width: A4_WIDTH - (2 * LINE_POS),
+                        height: A4_HEIGHT - (2 * LINE_POS),
+                        borderColor: rgb(0, 0, 0),
+                        borderWidth: 1, 
+                    });
+
+                    // Inhalt skalieren und zentrieren
+                    const scaleX = contentMaxWidth / originalDims.width;
+                    const scaleY = contentMaxHeight / originalDims.height;
                     const scale = Math.min(scaleX, scaleY);
 
-                    const finalWidth = embeddedPage.width * scale;
-                    const finalHeight = embeddedPage.height * scale;
+                    const centeredX = (A4_WIDTH - (originalDims.width * scale)) / 2;
+                    const centeredY = (A4_HEIGHT - (originalDims.height * scale)) / 2;
 
-                    // Zentrierung berechnen
-                    const xPos = margin + (availableWidth - finalWidth) / 2;
-                    const yPos = margin + (availableHeight - finalHeight) / 2;
-
-                    // Zeichnen der Originalseite zentriert
-                    newPage.drawPage(embeddedPage, {
-                        x: xPos,
-                        y: yPos,
-                        width: finalWidth,
-                        height: finalHeight,
-                    });
-
-                    // Optionale Hilfslinien für den äußeren Rahmen (hellgrau)
-                    // newPage.drawRectangle({ x: margin, y: margin, width: availableWidth, height: availableHeight, borderColor: rgb(0.9, 0.9, 0.9), borderWidth: 0.5 });
-
-                    // Die Trennlinie im rechten Rand zeichnen
-                    // Die Linie sitzt 16mm vom rechten Rand des INNEREN Dokuments entfernt (oder vom Papierrand?)
-                    // Laut Anforderung: "nach 16 mm ein Strich zu abtrennen". 
-                    // Wir platzieren sie 16mm von der rechten Blattkante entfernt (innerhalb des 31mm Randes).
-                    const lineX = a4Width - (margin - lineOffset); 
-
-                    // Falls die Anforderung meint: 16mm von der inneren Inhaltskante:
-                    // const lineX = (a4Width - margin) + lineOffset;
-                    
-                    // Standard-Interpretation: 16mm vom rechten Papierrand nach innen
-                    const actualLineX = a4Width - (margin - lineOffset);
-
-                    newPage.drawLine({
-                        start: { x: actualLineX, y: 0 },
-                        end: { x: actualLineX, y: a4Height },
-                        thickness: 0.7,
-                        color: rgb(0.6, 0.6, 0.6),
-                        dashArray: [4, 4]
-                    });
-                    
-                    newPage.drawText('TRENNLINIE', {
-                        x: actualLineX - 4,
-                        y: 40,
-                        size: 7,
-                        color: rgb(0.6, 0.6, 0.6),
-                        rotate: { type: 'degrees', angle: 90 },
+                    page.drawPage(embeddedPage, {
+                        x: centeredX,
+                        y: centeredY,
+                        width: originalDims.width * scale,
+                        height: originalDims.height * scale,
                     });
                 }
 
-                modifiedPdfBytes = await modifiedPdf.save();
-                const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+                const pdfBytes = await newPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
                 
-                pdfPreview.src = url;
-                pdfPreview.classList.remove('hidden');
-                noPreview.classList.add('hidden');
-                downloadBtn.style.display = 'block';
+                const iframe = document.getElementById('pdfPreview');
+                iframe.src = url;
+                iframe.style.display = 'block';
+                statusText.textContent = "Fertig! Siehe Vorschau unten.";
 
             } catch (err) {
                 console.error(err);
-                alert("Fehler: " + err.message);
-            } finally {
-                loadingOverlay.classList.add('hidden');
+                statusText.textContent = "Fehler beim Verarbeiten.";
+                alert("Fehler! Bitte überprüfe die Datei.");
             }
-        });
-
-        downloadBtn.addEventListener('click', () => {
-            if (!modifiedPdfBytes) return;
-            const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = "dokument_mit_31mm_rand.pdf";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
         });
     </script>
 </body>
