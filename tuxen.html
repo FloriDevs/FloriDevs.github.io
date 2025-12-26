@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuxen OS - Welcome</title>
+    <style>
+        /* Nord Theme Color Palette */
+        :root {
+            --bg-color: #2E3440;        /* Nord0 */
+            --sidebar-color: #3B4252;   /* Nord1 */
+            --text-color: #ECEFF4;      /* Nord6 */
+            --accent-color: #88C0D0;    /* Nord8 (Frost Blue) */
+            --button-color: #4C566A;    /* Nord3 */
+            --button-hover: #5E81AC;    /* Nord10 */
+            --card-bg: #3B4252;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 260px;
+            background-color: var(--sidebar-color);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .brand {
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--button-color);
+        }
+
+        /* Main Content Area */
+        main {
+            margin-left: 260px;
+            padding: 4rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .description {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+            color: #D8DEE9;
+        }
+
+        .highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--button-hover);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--button-color);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #434C5E;
+        }
+
+        /* Feature Cards (Connectivity Section) */
+        .section-title {
+            margin-top: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .card h3 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            nav { 
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                padding: 1rem;
+            }
+            main { margin-left: 0; padding: 2rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand">Tuxen OS</div>
+        <ul class="nav-links">
+            <li><a href="#home">🏠 Home</a></li>
+            <li><a href="#connectivity">🔗 Connectivity</a></li>
+            <li><a href="#software">📦 Software</a></li>
+            <li><a href="#settings">⚙️ Settings</a></li>
+        </ul>
+    </nav>
+
+    <main id="home">
+        <h1>Welcome to Tuxen OS</h1>
+        
+        <p class="description">
+            Tuxen OS is designed for <span class="highlight">speed, privacy, and elegance</span>. 
+            We utilize the <span class="highlight">Cinnamon Desktop Environment</span> 
+            to provide a familiar yet modern workflow.
+        </p>
+
+        <div class="btn-group">
+            <a href="#" class="btn btn-primary">⬇ Download ISO</a>
+            <a href="https://tuxen-os.org" class="btn btn-secondary" target="_blank">Official Website</a>
+        </div>
+
+        <section id="connectivity">
+            <h2 class="section-title">Stay Connected</h2>
+            
+            <div class="card">
+                <h3>KDE Connect</h3>
+                <p>Integrate your Android phone. Share files, see notifications, and control media.</p>
+            </div>
+
+            <div class="card">
+                <h3>Signal Messenger</h3>
+                <p>Secure messaging made easy. Use Signal Desktop for encrypted chats.</p>
+            </div>
+        </section>
+
+        <section id="software">
+            <h2 class="section-title">Software Management</h2>
+            <div style="margin-bottom: 1rem;">
+                <h4 style="color: var(--accent-color)">APT (Package Manager)</h4>
+                <p style="font-size: 0.9rem;">Standard way to install native software. Stable and reliable.</p>
+            </div>
+            <div>
+                <h4 style="color: var(--accent-color)">Flatpak (Universal Apps)</h4>
+                <p style="font-size: 0.9rem;">Sandboxed applications with latest updates. Secure and isolated.</p>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
