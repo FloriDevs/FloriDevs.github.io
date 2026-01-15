@@ -1,0 +1,169 @@
+{
+  "name": "FloriDevs",
+  "avatar": "https://avatars.githubusercontent.com/u/201249218?v=4",
+  "bg": "https://floridevs.github.io/codepages89898/codes/index.png",
+  "bio": "Hey, we are the FloriDevs Team ;-) !!! We are building lots of FOSS Software !!! We are in both high- and low-level developing. Our software is written and tested on Linux, so Linux is the recomanded OS but for sure (because we develope much in Java) you can also run the software on Windows or Mac",
+  "email": "floridevstudios@outlook.com",
+  "link": {
+    "text": "Code Pages",
+    "url": "https://floridevs.github.io/codepages.html"
+  },
+  "mode": "dark",
+  "lang": "en",
+  "repos": [
+    {
+      "name": "FloriDevs.github.io",
+      "url": "https://github.com/FloriDevs/FloriDevs.github.io",
+      "desc": "My Github io lol",
+      "img": "",
+      "pinned": true
+    },
+    {
+      "name": "Fiper",
+      "url": "https://github.com/FloriDevs/Fiper",
+      "desc": "A file Kompressor",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "W11Fixer",
+      "url": "https://github.com/FloriDevs/W11Fixer",
+      "desc": "W11Fixer is an FOSS Program what helps you to make Windows 11 better. It removes bloatware, spy features, edge, the new kontext menu and put the taskbar back to the left. Have fun.",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "MillaOS",
+      "url": "https://github.com/FloriDevs/MillaOS",
+      "desc": "Our own OS",
+      "img": "mos.png",
+      "pinned": true
+    },
+    {
+      "name": "FloriDevs",
+      "url": "https://github.com/FloriDevs/FloriDevs",
+      "desc": "Hey, we are the FloriDevs Team ;-) !!! We are building lots of FOSS Software !!! We are in both high- and low-level developing. Our software is written and tested on Linux, so Linux is the recomanded OS but for sure (because we develope much in Java)  you can also run the software on Windows or Mac",
+      "img": "",
+      "pinned": true
+    },
+    {
+      "name": "FDS-Data-Secure",
+      "url": "https://github.com/FloriDevs/FDS-Data-Secure",
+      "desc": "Some IT-Security Programms by me @FloriDevs",
+      "img": "ds.png",
+      "pinned": true
+    },
+    {
+      "name": "Floearch-Search-Engeen",
+      "url": "https://github.com/FloriDevs/Floearch-Search-Engeen",
+      "desc": "Our own hobby-made search engeen",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "apt-repo-encryption",
+      "url": "https://github.com/FloriDevs/apt-repo-encryption",
+      "desc": "",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "apt-repo-key",
+      "url": "https://github.com/FloriDevs/apt-repo-key",
+      "desc": "Yeah I know lame ",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "Morse-Chat",
+      "url": "https://github.com/FloriDevs/Morse-Chat",
+      "desc": "A messanger (in German).",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "Current_Relese-MillaOS",
+      "url": "https://github.com/FloriDevs/Current_Relese-MillaOS",
+      "desc": "",
+      "img": "mos.png",
+      "pinned": false
+    },
+    {
+      "name": "Computer-Fixes-for-Linux-Mint",
+      "url": "https://github.com/FloriDevs/Computer-Fixes-for-Linux-Mint",
+      "desc": "",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "FDJSLib",
+      "url": "https://github.com/FloriDevs/FDJSLib",
+      "desc": "A free JavaScript Library for Websites and simlar.",
+      "img": "js.png",
+      "pinned": true
+    },
+    {
+      "name": "FlashBrowser",
+      "url": "https://github.com/FloriDevs/FlashBrowser",
+      "desc": "A browser what is based on Blink (the Engien behind Chrome) and is made in Python3 by the Developer FloriDevs. (in Germany)",
+      "img": "fb.png",
+      "pinned": false
+    },
+    {
+      "name": "TheTuxenRepository",
+      "url": "https://github.com/FloriDevs/TheTuxenRepository",
+      "desc": "Make you Computer be a FloriDevs Tuxen",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "Code-thats-unfinished",
+      "url": "https://github.com/FloriDevs/Code-thats-unfinished",
+      "desc": "if you finished the code please write a mail to \"FloriDevStudios@outlook.com\" I want to see your project. Please sent a link to your Repository with the code. You don't have to put my (GitHub-)Name in the Repository(-Discrption) if you have luck I will put your link in my Repository. ;-). ",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "per2per",
+      "url": "https://github.com/FloriDevs/per2per",
+      "desc": "",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "Dashithing",
+      "url": "https://github.com/FloriDevs/Dashithing",
+      "desc": "My AndroidApp (propertly only avalible in German)",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "The_TuxenRepo",
+      "url": "https://github.com/FloriDevs/The_TuxenRepo",
+      "desc": "The official code of the programms for your Computer to make it be a \"FloriDevs Tuxen\"",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "WS2025",
+      "url": "https://github.com/FloriDevs/WS2025",
+      "desc": "The FloriDevs Worksweet 2025",
+      "img": "ws.png",
+      "pinned": false
+    },
+    {
+      "name": "TheMillaRepo",
+      "url": "https://github.com/FloriDevs/TheMillaRepo",
+      "desc": "Milla OS is now avalible on here. Have fun with my OS.",
+      "img": "",
+      "pinned": false
+    },
+    {
+      "name": "thisisatest.github.io",
+      "url": "https://github.com/FloriDevs/thisisatest.github.io",
+      "desc": "",
+      "img": "",
+      "pinned": false
+    }
+  ]
+}
