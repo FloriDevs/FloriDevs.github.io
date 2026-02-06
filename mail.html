@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nothing to see here | flotux</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --accent-color: #00d4ff;
+            --text-color: #ffffff;
+            --secondary-text: #b0b0b0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 500px;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #00d4ff, #0055ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--secondary-text);
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: #161616;
+            border: 1px solid #333;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .email-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .email-link:hover {
+            background: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="icon">🛸</div>
+            <h1>404: Content Missing</h1>
+            <p>
+                Congratulations! You’ve reached a place that doesn’t exist. Well, at least not as a website. 
+                This domain is strictly dedicated to <b>Email high-performance</b>.
+            </p>
+            <p>
+                Looking for something? Curiosity didn't kill the cat, it just sent an email.
+            </p>
+            
+            <a href="mailto:flotux@floridevs.is-cool.dev" class="email-link">
+                Ask flotux@floridevs.is-cool.dev
+            </a>
+        </div>
+        
+        <div class="footer">
+            Powered by 1s and 0s. Mostly 0s right now.
+        </div>
+    </div>
+
+</body>
+</html>
