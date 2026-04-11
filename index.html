@@ -1,141 +1,17 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://keepandroidopen.org/banner.js"></script>
-    <style>
-        :root { --glass: rgba(13, 17, 23, 0.7); --border: rgba(48, 54, 61, 0.6); --text: #c9d1d9; --accent: #58a6ff; }
-        .light-mode { --glass: rgba(255, 255, 255, 0.8); --text: #24292f; --border: #d0d7de; --accent: #0969da; }
-        
-        body { margin: 0; padding: 40px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--text); background: #0d1117; background-size: cover; background-position: center; transition: 0.3s; min-height: 100vh; }
-        .container { max-width: 1000px; margin: auto; }
-        
-        /* Header & Profil */
-        .header { display: flex; align-items: center; background: var(--glass); backdrop-filter: blur(12px); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .profile-pic { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent); margin-right: 20px; }
-        
-        .main-grid { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
-        .sidebar, .bio-box { background: var(--glass); backdrop-filter: blur(12px); padding: 20px; border-radius: 20px; border: 1px solid var(--border); }
-        
-        /* Suchfunktion */
-        .search-container { margin: 30px 0 10px 0; }
-        .search-input { width: 100%; padding: 12px 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--glass); color: var(--text); font-size: 1em; backdrop-filter: blur(10px); outline: none; box-sizing: border-box; }
-        .search-input:focus { border-color: var(--accent); }
-
-        /* Repositories */
-        .section-title { margin: 30px 0 15px; font-weight: bold; border-left: 4px solid var(--accent); padding-left: 10px; font-size: 1.2em; }
-        .repo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .repo-card { text-decoration: none; color: inherit; background: var(--glass); border: 1px solid var(--border); border-radius: 15px; padding: 15px; display: block; transition: transform 0.2s, border-color 0.2s; }
-        .repo-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-        
-        .repo-header { display: flex; align-items: center; margin-bottom: 10px; }
-        .repo-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 15px; background: #333; }
-        
-        .info-btn { font-size: 0.8em; color: var(--accent); font-weight: bold; display: block; margin-top: 10px; }
-        .desc { font-size: 0.85em; opacity: 0.8; border-top: 1px solid var(--border); margin-top: 5px; padding-top: 10px; }
-        
-        a { color: var(--accent); text-decoration: none; }
-        .sidebar a { display: block; margin-bottom: 10px; }
-
-        @media (max-width: 768px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .repo-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    <title>301</title>
 </head>
 <body>
-<div class="container">
-    <div class="header"><img id="avatar" class="profile-pic"><h1 id="name"></h1></div>
+    <h1><h1><h1>301</h1></h1></h1>
+    <h2>We moved to codeberg !!!!!</h2>
+    <a href="https://floridevs.codeberg.page/"><h2>Visit us on Codeberg</h2></a>
+    <hr style="width: 22">
+    <h3>you don't want to go to codeberg ?</h3>
+    <a href="gitindex.html">Go to our site on Github Pages</a>
     
-    <div class="main-grid">
-        <div class="sidebar">
-            <div id="links-list"></div>
-            <div id="email-box" style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;"></div>
-        </div>
-        <div class="bio-box" id="bio"></div>
-    </div>
-
-    <div class="search-container">
-        <input type="text" id="repo-search" class="search-input" placeholder="Nach Projekten suchen...">
-    </div>
-
-    <div id="pinned-area">
-        <div class="section-title" id="t-p"></div>
-        <div class="repo-grid" id="p-grid"></div>
-    </div>
-
-    <div id="others-area">
-        <div class="section-title" id="t-o"></div>
-        <div class="repo-grid" id="o-grid"></div>
-    </div>
-</div>
-
-<script>
-    let allRepos = [];
-    let currentLang = {};
-
-    function render(data) {
-        if(!data) return;
-        allRepos = data.repos; // Speichern für die Suche
-        
-        document.body.classList.toggle('light-mode', data.mode === 'light');
-        document.body.style.backgroundImage = data.bg ? `url(${data.bg})` : "none";
-        document.getElementById('name').innerText = data.name;
-        document.getElementById('avatar').src = data.avatar;
-        document.getElementById('bio').innerText = data.bio;
-        document.getElementById('links-list').innerHTML = data.link.url ? `<a href="${data.link.url}" target="_blank">🔗 ${data.link.text}</a>` : "";
-        document.getElementById('email-box').innerHTML = data.email ? `📧 <a href="mailto:${data.email}">${data.email}</a>` : "";
-
-        const dict = {
-            de: { p: "Gepinnte Repos", o: "Andere Repos", i: "V Informationen", search: "Nach Projekten suchen..." },
-            en: { p: "Pinned Repos", o: "Other Repos", i: "V Informations", search: "Search projects..." },
-            fr: { p: "Projets épinglés", o: "Autres projets", i: "V Informations", search: "Rechercher des projets..." }
-        };
-        currentLang = dict[data.lang] || dict.en;
-        document.getElementById('t-p').innerText = currentLang.p;
-        document.getElementById('t-o').innerText = currentLang.o;
-        document.getElementById('repo-search').placeholder = currentLang.search;
-
-        filterRepos(""); // Initiales Rendering
-    }
-
-    function filterRepos(searchTerm) {
-        const pg = document.getElementById('p-grid'); 
-        const og = document.getElementById('o-grid');
-        pg.innerHTML = ""; og.innerHTML = "";
-        
-        const query = searchTerm.toLowerCase();
-
-        allRepos.forEach(r => {
-            const matches = r.name.toLowerCase().includes(query) || r.desc.toLowerCase().includes(query);
-            if (!matches) return;
-
-            const html = `
-                <a href="${r.url}" class="repo-card" target="_blank">
-                    <div class="repo-header">
-                        <img src="${r.img || document.getElementById('avatar').src}" class="repo-img">
-                        <strong>${r.name}</strong>
-                    </div>
-                    <span class="info-btn">${currentLang.i}</span>
-                    <div class="desc">${r.desc}</div>
-                </a>`;
-            
-            if(r.pinned) pg.innerHTML += html; else og.innerHTML += html;
-        });
-
-        // Sektionen ausblenden, wenn leer
-        document.getElementById('pinned-area').style.display = pg.innerHTML ? "block" : "none";
-        document.getElementById('others-area').style.display = og.innerHTML ? "block" : "none";
-    }
-
-    // Event Listener für Suche
-    document.getElementById('repo-search').addEventListener('input', (e) => {
-        filterRepos(e.target.value);
-    });
-
-    window.addEventListener("message", (e) => render(e.data));
-    fetch('config.json').then(r => r.json()).then(render).catch(() => {});
-</script>
 </body>
 </html>
